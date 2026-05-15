@@ -1,0 +1,17 @@
+# Tokens e credenciais
+token*.txt
+token*.txt.txt
+*.env
+.env*
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+
+# Node (caso venha a usar)
+node_modules/
