@@ -1143,39 +1143,29 @@
       lastLookup = digits;
       statusEl.textContent = 'Consultando…';
       statusEl.className = 'cnpj-status-inline loading';
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://brasilapi.com.br/api/cnpj/v1/' + digits, true);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState !== 4) return;
-        statusEl.textContent = '';
-        statusEl.className = 'cnpj-status-inline';
-        if (xhr.status === 200) {
-          try {
-            var data = JSON.parse(xhr.responseText);
-            if (data.razao_social || data.nome) {
-              showCard(data.razao_social || data.nome, data.nome_fantasia || '');
-            } else {
-              resetCard();
-              statusEl.textContent = 'CNPJ não encontrado na base.';
-              statusEl.className = 'cnpj-status-inline error';
-            }
-          } catch(e) {
+      fetch('https://brasilapi.com.br/api/cnpj/v1/' + digits)
+        .then(function(r) {
+          if (!r.ok) throw new Error('not found');
+          return r.json();
+        })
+        .then(function(data) {
+          statusEl.textContent = '';
+          statusEl.className = 'cnpj-status-inline';
+          if (data.razao_social || data.nome) {
+            showCard(data.razao_social || data.nome, data.nome_fantasia || '');
+          } else {
             resetCard();
-            statusEl.textContent = 'Erro ao processar resposta.';
+            statusEl.textContent = 'CNPJ não encontrado na base.';
             statusEl.className = 'cnpj-status-inline error';
           }
-        } else {
+        })
+        .catch(function() {
+          statusEl.textContent = '';
+          statusEl.className = 'cnpj-status-inline';
           resetCard();
-          statusEl.textContent = 'CNPJ não encontrado na base.';
+          statusEl.textContent = 'Não foi possível consultar agora.';
           statusEl.className = 'cnpj-status-inline error';
-        }
-      };
-      xhr.onerror = function() {
-        resetCard();
-        statusEl.textContent = 'Não foi possível consultar agora.';
-        statusEl.className = 'cnpj-status-inline error';
-      };
-      xhr.send();
+        });
     }
 
     function handleCNPJ(val) {
