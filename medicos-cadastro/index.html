@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Médicos — ECGNow / ALIAR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+  <style>
+    :root {
+      --bg-primary:   #0c0a07;
+      --bg-secondary: #111827;
+      --bg-card:      #161e2e;
+      --bg-input:     #0e1520;
+      --border:       rgba(141, 122, 82, 0.35);
+      --border-focus: #8d7a52;
+      --gold:         #8d7a52;
+      --gold-light:   #a89877;
+      --gold-dark:    #6b5a3e;
+      --gold-glow:    rgba(141, 122, 82, 0.13);
+      --text-white:   #f9f9f9;
+      --text-muted:   #8a9bb0;
+      --text-label:   #c8d4e0;
+      --success:      #10b981;
+      --danger:       #ef4444;
+      --radius:       12px;
+      --radius-sm:    8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-white);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: rgba(22, 30, 46, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .logo-text { font-size: 20px; font-weight: 800; color: var(--text-white); letter-spacing: -0.5px; }
+    .logo-sub  { font-size: 11px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; }
+    .header-badge {
+      margin-left: auto;
+      background: var(--gold-glow);
+      border: 1px solid var(--border);
+      color: var(--gold-light);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 56px 24px 40px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 14px;
+    }
+    .hero h1 em { font-style: normal; color: var(--gold-light); }
+    .hero p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+    /* ── FORM WRAPPER ── */
+    .form-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── CARD SEÇÃO ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-header .icon {
+      width: 32px;
+      height: 32px;
+      background: var(--gold-glow);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .card-header h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .card-header span {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* ── GRID DE CAMPOS ── */
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .field-grid.col-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .field-full { grid-column: 1 / -1; }
+
+    /* ── CAMPO ── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-label);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field label .req { color: var(--gold); margin-left: 2px; }
+    .field input,
+    .field select,
+    .field textarea {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-white);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      transition: border-color 0.2s;
+      outline: none;
+      width: 100%;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text-muted); }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: var(--border-focus); }
+    .field input.error,
+    .field select.error { border-color: var(--danger); }
+    .field select option { background: var(--bg-card); color: var(--text-white); }
+    .field .hint { font-size: 11px; color: var(--text-muted); }
+    .field .err-msg { font-size: 11px; color: var(--danger); display: none; }
+    .field input.error ~ .err-msg,
+    .field select.error ~ .err-msg { display: block; }
+
+    /* ── EXAMES SELEÇÃO ── */
+    .exames-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .exame-toggle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+    .exame-toggle input[type="checkbox"] { display: none; }
+    .exame-toggle .exame-icon { font-size: 20px; color: var(--text-muted); transition: color 0.2s; }
+    .exame-toggle .exame-label { font-size: 12px; font-weight: 600; color: var(--text-muted); transition: color 0.2s; }
+    .exame-toggle.ativo {
+      background: var(--gold-glow);
+      border-color: var(--gold);
+    }
+    .exame-toggle.ativo .exame-icon,
+    .exame-toggle.ativo .exame-label { color: var(--gold-light); }
+
+    /* ── SUBCARD EXAME ── */
+    .exame-bloco {
+      background: rgba(141, 122, 82, 0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      margin-bottom: 14px;
+      display: none;
+    }
+    .exame-bloco.visivel { display: block; }
+    .exame-bloco h3 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 14px;
+    }
+
+    /* ── CHECKBOXES DIAS ── */
+    .dias-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .dia-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .dia-chip input[type="checkbox"] { display: none; }
+    .dia-chip.ativo {
+      background: var(--gold-glow);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    /* ── UPLOAD ── */
+    .upload-zone {
+      background: var(--bg-input);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .upload-zone:hover { border-color: var(--gold); }
+    .upload-zone.drag-over { border-color: var(--gold); background: var(--gold-glow); }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-zone .upload-icon { font-size: 24px; color: var(--text-muted); margin-bottom: 8px; }
+    .upload-zone .upload-title { font-size: 13px; font-weight: 600; color: var(--text-label); }
+    .upload-zone .upload-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .upload-preview {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--gold-glow);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-top: 8px;
+    }
+    .upload-preview.visivel { display: flex; }
+    .upload-preview .preview-icon { font-size: 18px; color: var(--gold); }
+    .upload-preview .preview-nome { font-size: 12px; color: var(--gold-light); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .upload-preview .preview-remover { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0 4px; }
+    .upload-preview .preview-remover:hover { color: var(--danger); }
+
+    /* ── BOTÃO ENVIAR ── */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--gold);
+      border: none;
+      border-radius: var(--radius);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-submit:hover { background: var(--gold-light); }
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ── SUCESSO ── */
+    .success-panel {
+      display: none;
+      text-align: center;
+      padding: 64px 24px;
+    }
+    .success-panel.visivel { display: block; }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(16, 185, 129, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 32px;
+      color: var(--success);
+    }
+    .success-panel h2 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .success-panel p { color: var(--text-muted); max-width: 440px; margin: 0 auto; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    footer strong { color: var(--gold-light); }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 600px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .field-grid.col-3 { grid-template-columns: 1fr 1fr; }
+      .exames-grid { grid-template-columns: repeat(2, 1fr); }
+      header { padding: 14px 16px; }
+      .form-wrapper { padding: 0 12px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo-text">ECGNow</div>
+    <div class="logo-sub">Telecardiologia</div>
+  </div>
+  <span class="header-badge">Metodologia ALIAR</span>
+</header>
+
+<div class="hero">
+  <h1>Bem-vindo ao <em>Book de Médicos</em> ALIAR</h1>
+  <p>Preencha seus dados profissionais para integrar nossa rede de parceiros. Suas informações serão utilizadas para apresentação estratégica a clientes da ECGNow.</p>
+</div>
+
+<div class="form-wrapper">
+
+  <!-- FORMULÁRIO -->
+  <form id="form-cadastro" novalidate>
+
+    <!-- ── SEÇÃO 01: Dados Pessoais ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon"><i class="ti ti-user-circle"></i></div>
+        <h2>Dados Pessoais</h2>
+        <span>Seção 01 de 07</span>
+      </div>
+      <div class="field-grid">
+        <div class="field field-full">
+          <label>Nome Completo <span class="req">*</span></label>
+          <input type="text" id="nome" name="nome" placeholder="Dr. João da Silva" required maxlength="200">
+          <span class="err-msg">Campo obrigatório</span>
+        </div>
+        <div class="field">
+          <label>CRM (Nº + Estado) <span class="req">*</span></label>
+          <input type="text" id="crm" name="crm" placeholder="123456/SP" required maxlength="30">
+          <span class="err-msg">Informe no formato: 123456/SP</span>
+        </div>
+        <div class="field">
+          <label>RQE <span class="req">*</span></label>
+          <input type="text" id="rqe" name="rqe" placeholder="12345" required maxlength="30">
+          <span class="hint">Registro de Qualificação de Especialista</span>
+        </div>
+        <div class="field">
+          <label>Formação — Graduação <span class="req">*</span></label>
+          <input type="text" id="formacao" name="formacao" placeholder="Medicina" required maxlength="100">
+        </div>
+        <div class="field">
+          <label>Instituição — Graduação <span class="req">*</span></label>
+          <input type="text" id="instituicao_grad" name="instituicao_grad" placeholder="USP, UNICAMP…" required maxlength="150">
+        </div>
+        <div class="field">
+          <label>Especialização / Residência <span class="req">*</span></label>
+          <input type="text" id="especializacao" name="especializacao" placeholder="Cardiologia" required maxlength="150">
+        </div>
+        <div class="field">
+          <label>Instituição — Especialização <span class="req">*</span></label>
+          <input type="text" id="instituicao_esp" name="instituicao_esp" placeholder="Incor, InCor…" required maxlength="150">
+        </div>
+      </div>
+
+      <!-- Upload: Foto -->
+      <div style="margin-top: 20px;">
+        <p style="font-size: 12px; font-weight: 600; color: var(--text-label); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+          Foto de Perfil Médico
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 400; text-transform: none; letter-spacing: 0;">(PNG ou JPG — máx. 5 MB)</span>
+        </p>
+        <div class="upload-zone" id="zone-foto"
+          ondragover="dragSobre(event, 'zone-foto')"
+          ondragleave="dragFora('zone-foto')"
+          ondrop="soltarArquivo(event, 'zone-foto', 'input-foto', 5, ['image/jpeg','image/png'])">
+          <input type="file" id="input-foto" accept="image/jpeg,image/png"
+            onchange="selecionarArquivo('input-foto', 5, ['image/jpeg','image/png'], 'zone-foto')">
+          <div class="upload-icon"><i class="ti ti-camera"></i></div>
+          <div class="upload-title">Clique ou arraste sua foto aqui</div>
+          <div class="upload-hint">Para apresentação aos clientes da ECGNow</div>
+        </div>
+        <div class="upload-preview" id="prev-foto">
+          <i class="ti ti-photo preview-icon"></i>
+          <span class="preview-nome" id="nome-foto">—</span>
+          <button type="button" class="preview-remover" onclick="removerArquivo('input-foto', 'zone-foto', 'prev-foto')">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO 02: Dados Empresariais ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon"><i class="ti ti-building"></i></div>
+        <h2>Dados Empresariais</h2>
+        <span>Seção 02 de 07</span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>CNPJ <span class="req">*</span></label>
+          <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18" required oninput="mascaraCNPJ(this)">
+          <span class="err-msg">CNPJ inválido</span>
+        </div>
+        <div class="field">
+          <label>Razão Social / Nome Fantasia <span class="req">*</span></label>
+          <input type="text" id="razao_social" name="razao_social" placeholder="Nome da empresa ou MEI" required maxlength="200">
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp <span class="req">*</span></label>
+          <input type="text" id="telefone" name="telefone" placeholder="(11) 99999-9999" maxlength="15" required oninput="mascaraTelefone(this)">
+          <span class="err-msg">Telefone inválido</span>
+        </div>
+        <div class="field">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="email" name="email" placeholder="seu@email.com.br" required maxlength="200">
+          <span class="err-msg">E-mail inválido</span>
+        </div>
+        <div class="field field-full">
+          <label>Estado que Atua (UF) <span class="req">*</span></label>
+          <select id="estado" name="estado" required>
+            <option value="">Selecione o estado…</option>
+            <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
+            <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+            <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
+            <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
+            <option>SE</option><option>SP</option><option>TO</option>
+          </select>
+          <span class="err-msg">Selecione um estado</span>
+          <span class="hint">Se atua em mais de um estado, selecione o principal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO 03-06: Exames e Valores ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon"><i class="ti ti-heart-rate-monitor"></i></div>
+        <h2>Exames, SLA e Valores</h2>
+        <span>Seções 03–06 de 07</span>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        Selecione os exames que você lauda. Os campos de valor e prazo serão exibidos para cada selecionado.
+      </p>
+
+      <!-- Seleção de exames -->
+      <div class="exames-grid">
+        <label class="exame-toggle" id="toggle-ecg" onclick="alternarExame('ecg')">
+          <input type="checkbox" id="chk-ecg" value="ECG">
+          <i class="ti ti-activity exame-icon"></i>
+          <span class="exame-label">ECG</span>
+        </label>
+        <label class="exame-toggle" id="toggle-holter" onclick="alternarExame('holter')">
+          <input type="checkbox" id="chk-holter" value="Holter">
+          <i class="ti ti-device-heart-monitor exame-icon"></i>
+          <span class="exame-label">Holter</span>
+        </label>
+        <label class="exame-toggle" id="toggle-mapa" onclick="alternarExame('mapa')">
+          <input type="checkbox" id="chk-mapa" value="MAPA">
+          <i class="ti ti-device-watch-heart exame-icon"></i>
+          <span class="exame-label">MAPA</span>
+        </label>
+        <label class="exame-toggle" id="toggle-te" onclick="alternarExame('te')">
+          <input type="checkbox" id="chk-te" value="Teste Ergométrico">
+          <i class="ti ti-run exame-icon"></i>
+          <span class="exame-label">Teste Ergométrico</span>
+        </label>
+      </div>
+
+      <!-- Blocos por exame -->
+      <div class="exame-bloco" id="bloco-ecg">
+        <h3><i class="ti ti-activity" style="margin-right:6px;"></i>ECG — Eletrocardiograma</h3>
+        <div class="field-grid col-3">
+          <div class="field">
+            <label>Valor Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="ecg_valor_amb" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="ecg_sla_amb" placeholder="Ex: 24h" maxlength="30">
+          </div>
+          <div class="field" style="grid-column: 1;">
+            <label>Valor Emergência <span class="req">*</span></label>
+            <input type="text" id="ecg_valor_emerg" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Emergência <span class="req">*</span></label>
+            <input type="text" id="ecg_sla_emerg" placeholder="Ex: 30 min" maxlength="30">
+          </div>
+        </div>
+      </div>
+
+      <div class="exame-bloco" id="bloco-holter">
+        <h3><i class="ti ti-device-heart-monitor" style="margin-right:6px;"></i>Holter</h3>
+        <div class="field-grid col-3">
+          <div class="field">
+            <label>Valor Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="holter_valor_amb" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="holter_sla_amb" placeholder="Ex: 48h" maxlength="30">
+          </div>
+          <div class="field" style="grid-column: 1;">
+            <label>Valor Emergência <span class="req">*</span></label>
+            <input type="text" id="holter_valor_emerg" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Emergência <span class="req">*</span></label>
+            <input type="text" id="holter_sla_emerg" placeholder="Ex: 1h" maxlength="30">
+          </div>
+        </div>
+      </div>
+
+      <div class="exame-bloco" id="bloco-mapa">
+        <h3><i class="ti ti-device-watch-heart" style="margin-right:6px;"></i>MAPA</h3>
+        <div class="field-grid col-3">
+          <div class="field">
+            <label>Valor Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="mapa_valor_amb" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="mapa_sla_amb" placeholder="Ex: 48h" maxlength="30">
+          </div>
+          <div class="field" style="grid-column: 1;">
+            <label>Valor Emergência <span class="req">*</span></label>
+            <input type="text" id="mapa_valor_emerg" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Emergência <span class="req">*</span></label>
+            <input type="text" id="mapa_sla_emerg" placeholder="Ex: 1h" maxlength="30">
+          </div>
+        </div>
+      </div>
+
+      <div class="exame-bloco" id="bloco-te">
+        <h3><i class="ti ti-run" style="margin-right:6px;"></i>Teste Ergométrico</h3>
+        <div class="field-grid col-3">
+          <div class="field">
+            <label>Valor Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="te_valor_amb" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Ambulatorial <span class="req">*</span></label>
+            <input type="text" id="te_sla_amb" placeholder="Ex: 48h" maxlength="30">
+          </div>
+          <div class="field" style="grid-column: 1;">
+            <label>Valor Emergência <span class="req">*</span></label>
+            <input type="text" id="te_valor_emerg" placeholder="R$ 0,00" maxlength="20">
+          </div>
+          <div class="field">
+            <label>SLA Emergência <span class="req">*</span></label>
+            <input type="text" id="te_sla_emerg" placeholder="Ex: 1h" maxlength="30">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO 07: Disponibilidade ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon"><i class="ti ti-clock"></i></div>
+        <h2>Disponibilidade</h2>
+        <span>Seção 07 de 07</span>
+      </div>
+      <div class="field" style="margin-bottom: 20px;">
+        <label>Horário de Atendimento <span class="req">*</span></label>
+        <input type="text" id="horario" name="horario" placeholder="Ex: 07:00 às 23:00" required maxlength="50">
+        <span class="err-msg">Campo obrigatório</span>
+      </div>
+      <div class="field">
+        <label>Dias de Atendimento <span class="req">*</span></label>
+        <div class="dias-grid" style="margin-top: 8px;">
+          <label class="dia-chip" onclick="alternarDia(this)">
+            <input type="checkbox" value="Segunda-feira"> Segunda
+          </label>
+          <label class="dia-chip" onclick="alternarDia(this)">
+            <input type="checkbox" value="Terça-feira"> Terça
+          </label>
+          <label class="dia-chip" onclick="alternarDia(this)">
+            <input type="checkbox" value="Quarta-feira"> Quarta
+          </label>
+          <label class="dia-chip" onclick="alternarDia(this)">
+            <input type="checkbox" value="Quinta-feira"> Quinta
+          </label>
+          <label class="dia-chip" onclick="alternarDia(this)">
+            <input type="checkbox" value="Sexta-feira"> Sexta
+          </label>
+          <label class="dia-chip" onclick="alternarDia(this)">
+            <input type="checkbox" value="Sábado"> Sábado
+          </label>
+          <label class="dia-chip" onclick="alternarDia(this)">
+            <input type="checkbox" value="Domingo"> Domingo
+          </label>
+        </div>
+        <span id="dias-err" style="font-size:11px;color:var(--danger);display:none;margin-top:6px;">Selecione ao menos um dia</span>
+      </div>
+    </div>
+
+    <!-- ── DOCUMENTOS ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon"><i class="ti ti-file-certificate"></i></div>
+        <h2>Documentos</h2>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        Envie seu CRM digital para validação do cadastro. A foto de perfil foi solicitada na Seção 01.
+      </p>
+      <div class="field">
+        <label>CRM Digital <span style="font-size:10px;color:var(--text-muted);font-weight:400;">(PDF — máx. 10 MB)</span></label>
+        <div class="upload-zone" id="zone-crm"
+          ondragover="dragSobre(event, 'zone-crm')"
+          ondragleave="dragFora('zone-crm')"
+          ondrop="soltarArquivo(event, 'zone-crm', 'input-crm', 10, ['application/pdf'])">
+          <input type="file" id="input-crm" accept="application/pdf"
+            onchange="selecionarArquivo('input-crm', 10, ['application/pdf'], 'zone-crm')">
+          <div class="upload-icon"><i class="ti ti-upload"></i></div>
+          <div class="upload-title">Clique ou arraste o PDF do CRM</div>
+          <div class="upload-hint">Frente e verso em um único PDF</div>
+        </div>
+        <div class="upload-preview" id="prev-crm">
+          <i class="ti ti-file-type-pdf preview-icon"></i>
+          <span class="preview-nome" id="nome-crm">—</span>
+          <button type="button" class="preview-remover" onclick="removerArquivo('input-crm', 'zone-crm', 'prev-crm')">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÃO ENVIAR -->
+    <button type="submit" class="btn-submit" id="btn-enviar">
+      <i class="ti ti-send"></i>
+      Enviar Cadastro
+    </button>
+
+  </form>
+
+  <!-- PAINEL DE SUCESSO -->
+  <div class="success-panel" id="painel-sucesso">
+    <div class="success-icon"><i class="ti ti-circle-check"></i></div>
+    <h2>Cadastro recebido com sucesso!</h2>
+    <p>Obrigado pelas informações. Nossa equipe irá revisar seu perfil e você receberá um e-mail de confirmação em breve.</p>
+  </div>
+
+</div><!-- /form-wrapper -->
+
+<footer>
+  <strong>ECGNow Telecardiologia</strong> · Metodologia ALIAR ·
+  <a href="mailto:contato@ecgnow.com.br" style="color:var(--gold-light);text-decoration:none;">contato@ecgnow.com.br</a>
+</footer>
+
+<script>
+  // ──────────────────────────────────────────────────
+  // CONFIGURAÇÃO — substitua após publicar o Apps Script
+  // ──────────────────────────────────────────────────
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyD4PersgMRlZShRrnONZTU2rghSfPkYE9PD0nS8jccQiap-XzxgZ_KTberraVNBKUykw/exec';
+
+  // ── Armazena dados dos arquivos selecionados ──
+  var arquivos = { foto: null, crm: null };
+
+  // ── Alterna exibição dos blocos de exame ──
+  function alternarExame(exame) {
+    var chk   = document.getElementById('chk-' + exame);
+    var toggle = document.getElementById('toggle-' + exame);
+    var bloco  = document.getElementById('bloco-' + exame);
+    chk.checked = !chk.checked;
+    toggle.classList.toggle('ativo', chk.checked);
+    bloco.classList.toggle('visivel', chk.checked);
+  }
+
+  // ── Alterna chips de dia ──
+  function alternarDia(label) {
+    var chk = label.querySelector('input[type="checkbox"]');
+    chk.checked = !chk.checked;
+    label.classList.toggle('ativo', chk.checked);
+  }
+
+  // ── Upload: drag-and-drop ──
+  function dragSobre(e, zoneId) {
+    e.preventDefault();
+    document.getElementById(zoneId).classList.add('drag-over');
+  }
+  function dragFora(zoneId) {
+    document.getElementById(zoneId).classList.remove('drag-over');
+  }
+  function soltarArquivo(e, zoneId, inputId, maxMB, tiposAceitos) {
+    e.preventDefault();
+    dragFora(zoneId);
+    var file = e.dataTransfer.files[0];
+    if (file) processarArquivo(file, inputId, maxMB, tiposAceitos, zoneId);
+  }
+  function selecionarArquivo(inputId, maxMB, tiposAceitos, zoneId) {
+    var input = document.getElementById(inputId);
+    if (input.files[0]) processarArquivo(input.files[0], inputId, maxMB, tiposAceitos, zoneId);
+  }
+
+  function processarArquivo(file, inputId, maxMB, tiposAceitos, zoneId) {
+    if (!tiposAceitos.includes(file.type)) {
+      alert('Tipo de arquivo não aceito. Use: ' + tiposAceitos.join(', '));
+      return;
+    }
+    if (file.size > maxMB * 1024 * 1024) {
+      alert('Arquivo muito grande. Máximo: ' + maxMB + ' MB');
+      return;
+    }
+    var tipo = inputId === 'input-foto' ? 'foto' : 'crm';
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      // Armazena base64 sem o prefixo data:...;base64,
+      var base64 = e.target.result.split(',')[1];
+      arquivos[tipo] = { base64: base64, nome: file.name, tipo: file.type };
+      // Atualiza preview
+      var prevId = tipo === 'foto' ? 'prev-foto' : 'prev-crm';
+      var nomeId = tipo === 'foto' ? 'nome-foto' : 'nome-crm';
+      document.getElementById(nomeId).textContent = file.name;
+      document.getElementById(prevId).classList.add('visivel');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removerArquivo(inputId, zoneId, prevId) {
+    var tipo = inputId === 'input-foto' ? 'foto' : 'crm';
+    arquivos[tipo] = null;
+    document.getElementById(inputId).value = '';
+    document.getElementById(prevId).classList.remove('visivel');
+  }
+
+  // ── Máscaras ──
+  function mascaraCNPJ(input) {
+    var v = input.value.replace(/\D/g, '').substring(0, 14);
+    v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+    v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+    v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+    v = v.replace(/(\d{4})(\d)/, '$1-$2');
+    input.value = v;
+  }
+  function mascaraTelefone(input) {
+    var v = input.value.replace(/\D/g, '').substring(0, 11);
+    if (v.length <= 10) {
+      v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else {
+      v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+    }
+    input.value = v;
+  }
+
+  // ── Sanitização client-side ──
+  function sanitizar(val) {
+    if (!val) return '';
+    return String(val).replace(/<[^>]*>/g, '').trim().substring(0, 1000);
+  }
+
+  // ── Validação ──
+  function validarForm() {
+    var ok = true;
+    var campos = ['nome', 'crm', 'rqe', 'formacao', 'instituicao_grad',
+                  'especializacao', 'instituicao_esp', 'cnpj', 'razao_social',
+                  'telefone', 'email', 'estado', 'horario'];
+
+    campos.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var vazio = !el.value.trim();
+      el.classList.toggle('error', vazio);
+      if (vazio) ok = false;
+    });
+
+    // Valida e-mail
+    var emailEl = document.getElementById('email');
+    if (emailEl && emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+      emailEl.classList.add('error');
+      ok = false;
+    }
+
+    // Valida ao menos um exame selecionado
+    var examesSel = ['ecg','holter','mapa','te'].filter(function(e) {
+      return document.getElementById('chk-' + e).checked;
+    });
+    if (examesSel.length === 0) {
+      alert('Selecione ao menos um exame que você lauda.');
+      ok = false;
+    }
+
+    // Valida dias
+    var dias = [...document.querySelectorAll('.dia-chip input:checked')];
+    var diasErr = document.getElementById('dias-err');
+    if (dias.length === 0) {
+      diasErr.style.display = 'block';
+      ok = false;
+    } else {
+      diasErr.style.display = 'none';
+    }
+
+    return ok;
+  }
+
+  // ── Coleta de dados do formulário ──
+  function coletarDados() {
+    var examesAtivos = ['ecg','holter','mapa','te'].filter(function(e) {
+      return document.getElementById('chk-' + e).checked;
+    });
+
+    var examesObj = {};
+    examesAtivos.forEach(function(ex) {
+      examesObj[ex] = {
+        valor_amb:   sanitizar(document.getElementById(ex + '_valor_amb').value),
+        sla_amb:     sanitizar(document.getElementById(ex + '_sla_amb').value),
+        valor_emerg: sanitizar(document.getElementById(ex + '_valor_emerg').value),
+        sla_emerg:   sanitizar(document.getElementById(ex + '_sla_emerg').value),
+      };
+    });
+
+    var dias = [...document.querySelectorAll('.dia-chip input:checked')]
+                 .map(function(d) { return d.value; });
+
+    var payload = {
+      nome:             sanitizar(document.getElementById('nome').value),
+      crm:              sanitizar(document.getElementById('crm').value),
+      rqe:              sanitizar(document.getElementById('rqe').value),
+      formacao:         sanitizar(document.getElementById('formacao').value),
+      instituicao_grad: sanitizar(document.getElementById('instituicao_grad').value),
+      especializacao:   sanitizar(document.getElementById('especializacao').value),
+      instituicao_esp:  sanitizar(document.getElementById('instituicao_esp').value),
+      cnpj:             sanitizar(document.getElementById('cnpj').value),
+      razao_social:     sanitizar(document.getElementById('razao_social').value),
+      telefone:         sanitizar(document.getElementById('telefone').value),
+      email:            sanitizar(document.getElementById('email').value),
+      estado:           sanitizar(document.getElementById('estado').value),
+      exames_selecionados: examesAtivos.map(function(e) { return e.toUpperCase(); }),
+      exames:           examesObj,
+      horario:          sanitizar(document.getElementById('horario').value),
+      dias:             dias,
+    };
+
+    if (arquivos.foto) {
+      payload.foto_base64 = arquivos.foto.base64;
+      payload.foto_nome   = arquivos.foto.nome;
+      payload.foto_tipo   = arquivos.foto.tipo;
+    }
+    if (arquivos.crm) {
+      payload.crm_doc_base64 = arquivos.crm.base64;
+      payload.crm_doc_nome   = arquivos.crm.nome;
+    }
+
+    return payload;
+  }
+
+  // ── Envio do formulário ──
+  document.getElementById('form-cadastro').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validarForm()) return;
+
+    var btn = document.getElementById('btn-enviar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader-2"></i> Enviando…';
+
+    var payload = coletarDados();
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.success) {
+        document.getElementById('form-cadastro').style.display = 'none';
+        document.getElementById('painel-sucesso').classList.add('visivel');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert('Erro: ' + (data.message || 'Tente novamente.'));
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-send"></i> Enviar Cadastro';
+      }
+    })
+    .catch(function() {
+      alert('Falha na conexão. Verifique sua internet e tente novamente.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-send"></i> Enviar Cadastro';
+    });
+  });
+
+  // Remove classe error ao digitar
+  document.querySelectorAll('input, select').forEach(function(el) {
+    el.addEventListener('input', function() { el.classList.remove('error'); });
+  });
+</script>
+</body>
+</html>
