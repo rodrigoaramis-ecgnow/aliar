@@ -455,12 +455,16 @@
       <div class="field-grid">
         <div class="field">
           <label>CNPJ <span class="req">*</span></label>
-          <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18" required oninput="mascaraCNPJ(this)">
-          <span class="err-msg">CNPJ inválido</span>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18" required oninput="mascaraCNPJ(this)" style="flex:1;">
+            <button type="button" id="btn-cnpj" onclick="consultarCNPJ()" style="background:var(--gold);border:none;border-radius:var(--radius-sm);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:0 16px;cursor:pointer;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='var(--gold-light)'" onmouseout="this.style.background='var(--gold)'">Consultar</button>
+          </div>
+          <span class="err-msg" id="cnpj-err">CNPJ inválido</span>
+          <span id="cnpj-status" style="font-size:11px;color:var(--text-muted);display:none;"></span>
         </div>
         <div class="field">
           <label>Razão Social / Nome Fantasia <span class="req">*</span></label>
-          <input type="text" id="razao_social" name="razao_social" placeholder="Nome da empresa ou MEI" required maxlength="200">
+          <input type="text" id="razao_social" name="razao_social" placeholder="Preenchido automaticamente via CNPJ" required maxlength="200">
         </div>
         <div class="field">
           <label>Telefone / WhatsApp <span class="req">*</span></label>
@@ -784,6 +788,49 @@
     arquivos[tipo] = null;
     document.getElementById(inputId).value = '';
     document.getElementById(prevId).classList.remove('visivel');
+  }
+
+  // ── Consulta CNPJ via BrasilAPI ──
+  function consultarCNPJ() {
+    var cnpj = document.getElementById('cnpj').value.replace(/\D/g, '');
+    var status = document.getElementById('cnpj-status');
+    var btn = document.getElementById('btn-cnpj');
+
+    if (cnpj.length !== 14) {
+      document.getElementById('cnpj').classList.add('error');
+      status.style.display = 'none';
+      alert('Preencha o CNPJ completo antes de consultar.');
+      return;
+    }
+
+    btn.textContent = 'Consultando…';
+    btn.disabled = true;
+    status.textContent = 'Buscando dados…';
+    status.style.color = 'var(--text-muted)';
+    status.style.display = 'block';
+
+    fetch('https://brasilapi.com.br/api/cnpj/v1/' + cnpj)
+      .then(function(res) {
+        if (!res.ok) throw new Error('não encontrado');
+        return res.json();
+      })
+      .then(function(data) {
+        var nome = data.nome_fantasia && data.nome_fantasia.trim()
+          ? data.nome_fantasia
+          : data.razao_social;
+        document.getElementById('razao_social').value = nome || '';
+        status.textContent = '✓ Dados preenchidos automaticamente';
+        status.style.color = 'var(--success)';
+      })
+      .catch(function() {
+        status.textContent = 'CNPJ não encontrado. Preencha manualmente.';
+        status.style.color = 'var(--danger)';
+        document.getElementById('razao_social').focus();
+      })
+      .finally(function() {
+        btn.textContent = 'Consultar';
+        btn.disabled = false;
+      });
   }
 
   // ── Máscaras ──
