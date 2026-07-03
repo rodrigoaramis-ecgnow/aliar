@@ -664,36 +664,6 @@
       </div>
     </div>
 
-    <!-- ── DOCUMENTOS ── -->
-    <div class="card">
-      <div class="card-header">
-        <div class="icon"><i class="ti ti-file-certificate"></i></div>
-        <h2>Documentos</h2>
-      </div>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-        Envie seu CRM digital para validação do cadastro. A foto de perfil foi solicitada na Seção 01.
-      </p>
-      <div class="field">
-        <label>CRM Digital <span style="font-size:10px;color:var(--text-muted);font-weight:400;">(PDF — máx. 10 MB)</span></label>
-        <div class="upload-zone" id="zone-crm"
-          ondragover="dragSobre(event, 'zone-crm')"
-          ondragleave="dragFora('zone-crm')"
-          ondrop="soltarArquivo(event, 'zone-crm', 'input-crm', 10, ['application/pdf'])">
-          <input type="file" id="input-crm" accept="application/pdf"
-            onchange="selecionarArquivo('input-crm', 10, ['application/pdf'], 'zone-crm')">
-          <div class="upload-icon"><i class="ti ti-upload"></i></div>
-          <div class="upload-title">Clique ou arraste o PDF do CRM</div>
-          <div class="upload-hint">Frente e verso em um único PDF</div>
-        </div>
-        <div class="upload-preview" id="prev-crm">
-          <i class="ti ti-file-type-pdf preview-icon"></i>
-          <span class="preview-nome" id="nome-crm">—</span>
-          <button type="button" class="preview-remover" onclick="removerArquivo('input-crm', 'zone-crm', 'prev-crm')">
-            <i class="ti ti-x"></i>
-          </button>
-        </div>
-      </div>
-    </div>
 
     <!-- BOTÃO ENVIAR -->
     <button type="submit" class="btn-submit" id="btn-enviar">
