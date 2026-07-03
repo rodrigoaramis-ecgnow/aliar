@@ -453,18 +453,21 @@
         <span>Seção 02 de 07</span>
       </div>
       <div class="field-grid">
-        <div class="field">
+        <div class="field field-full">
           <label>CNPJ <span class="req">*</span></label>
           <div style="display:flex;gap:8px;">
             <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18" required oninput="mascaraCNPJ(this)" style="flex:1;">
             <button type="button" id="btn-cnpj" onclick="consultarCNPJ()" style="background:var(--gold);border:none;border-radius:var(--radius-sm);color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:0 16px;cursor:pointer;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='var(--gold-light)'" onmouseout="this.style.background='var(--gold)'">Consultar</button>
           </div>
-          <span class="err-msg" id="cnpj-err">CNPJ inválido</span>
-          <span id="cnpj-status" style="font-size:11px;color:var(--text-muted);display:none;"></span>
-        </div>
-        <div class="field">
-          <label>Razão Social / Nome Fantasia <span class="req">*</span></label>
-          <input type="text" id="razao_social" name="razao_social" placeholder="Preenchido automaticamente via CNPJ" required maxlength="200">
+          <span class="err-msg">CNPJ inválido</span>
+          <span id="cnpj-status" style="font-size:11px;display:none;margin-top:4px;"></span>
+          <!-- Empresa encontrada — exibida como confirmação, não campo editável -->
+          <div id="cnpj-resultado" style="display:none;margin-top:8px;background:var(--gold-glow);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--gold-light);">
+            <i class="ti ti-building" style="margin-right:6px;"></i>
+            <span id="cnpj-nome">—</span>
+          </div>
+          <!-- Campo oculto enviado com o formulário -->
+          <input type="hidden" id="razao_social" name="razao_social">
         </div>
         <div class="field">
           <label>Telefone / WhatsApp <span class="req">*</span></label>
@@ -819,13 +822,18 @@
           ? data.nome_fantasia
           : data.razao_social;
         document.getElementById('razao_social').value = nome || '';
-        status.textContent = '✓ Dados preenchidos automaticamente';
+        document.getElementById('cnpj-nome').textContent = nome || '—';
+        document.getElementById('cnpj-resultado').style.display = 'block';
+        status.textContent = '✓ Empresa identificada';
         status.style.color = 'var(--success)';
+        status.style.display = 'block';
       })
       .catch(function() {
-        status.textContent = 'CNPJ não encontrado. Preencha manualmente.';
+        document.getElementById('cnpj-resultado').style.display = 'none';
+        document.getElementById('razao_social').value = '';
+        status.textContent = 'CNPJ não encontrado na Receita Federal.';
         status.style.color = 'var(--danger)';
-        document.getElementById('razao_social').focus();
+        status.style.display = 'block';
       })
       .finally(function() {
         btn.textContent = 'Consultar';
@@ -862,8 +870,17 @@
   function validarForm() {
     var ok = true;
     var campos = ['nome', 'crm', 'rqe', 'formacao', 'instituicao_grad',
-                  'especializacao', 'instituicao_esp', 'cnpj', 'razao_social',
+                  'especializacao', 'instituicao_esp', 'cnpj',
                   'telefone', 'email', 'estado', 'horario'];
+
+    // Valida Razão Social (campo oculto preenchido via consulta CNPJ)
+    if (!document.getElementById('razao_social').value.trim()) {
+      var s = document.getElementById('cnpj-status');
+      s.textContent = 'Clique em "Consultar" para identificar o CNPJ.';
+      s.style.color = 'var(--danger)';
+      s.style.display = 'block';
+      ok = false;
+    }
 
     campos.forEach(function(id) {
       var el = document.getElementById(id);
