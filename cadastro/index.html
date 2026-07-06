@@ -478,7 +478,7 @@
         <label for="vencimento_boleto">Vencimento do Boleto <span class="req">*</span></label>
         <select id="vencimento_boleto" name="vencimento_boleto">
           <option value="" disabled selected>Selecione o dia…</option>
-          <option value="5">Dia 5</option>
+          <option value="7">Dia 7</option>
           <option value="10">Dia 10</option>
           <option value="15">Dia 15</option>
         </select>
@@ -775,7 +775,7 @@
   /* ── REMOVER UPLOAD ── */
   function removeUpload(inputId, zoneId, previewId, labelId) {
     var input = document.getElementById(inputId);
-    input.value = ""; input._b64 = null;
+    input.value = ""; input._b64 = null; input._nome = null; input._tipo = null;
     var zone = document.getElementById(zoneId);
     zone.classList.remove("has-file");
     var preview = document.getElementById(previewId);
@@ -865,7 +865,7 @@
       return;
     }
     zone.classList.add("has-file");
-    var removeId = "remove_" + inputId.replace("file_","");
+    var removeId = "remove_" + input.id.replace("file_","");
     var removeBtn = document.getElementById(removeId);
     if (removeBtn) removeBtn.style.display = "flex";
     if (file.type.startsWith("image/")) {
@@ -881,7 +881,11 @@
       label.style.color = "var(--success)";
     }
     var r2 = new FileReader();
-    r2.onload = function(e) { input._b64 = e.target.result.split(",")[1]; };
+    r2.onload = function(e) {
+      input._b64 = e.target.result.split(",")[1];
+      input._nome = file.name;
+      input._tipo = file.type;
+    };
     r2.readAsDataURL(file);
   }
 
@@ -1129,8 +1133,18 @@
       responsavel_implantacao: { nome: g('imp_nome'), nascimento: g('imp_nascimento'), email: g('imp_email'), celular: g('imp_celular') },
       responsavel_enfermagem: { nome: g('enf_nome'), nascimento: g('enf_nascimento'), email: g('enf_email'), celular: g('enf_celular') },
       documentos: {
-        logotipo:        (document.getElementById('file_logo')||{})._b64 || null,
-        contrato_social: (document.getElementById('file_contrato')||{})._b64 || null,
+        logotipo:             (document.getElementById('file_logo')||{})._b64 || null,
+        logotipo_nome:        (document.getElementById('file_logo')||{})._nome || null,
+        logotipo_tipo:        (document.getElementById('file_logo')||{})._tipo || null,
+        cartao_cnpj:          (document.getElementById('file_cartao_cnpj')||{})._b64 || null,
+        cartao_cnpj_nome:     (document.getElementById('file_cartao_cnpj')||{})._nome || null,
+        cartao_cnpj_tipo:     (document.getElementById('file_cartao_cnpj')||{})._tipo || null,
+        contrato_social:      (document.getElementById('file_contrato')||{})._b64 || null,
+        contrato_social_nome: (document.getElementById('file_contrato')||{})._nome || null,
+        contrato_social_tipo: (document.getElementById('file_contrato')||{})._tipo || null,
+        alt_contrato:         (document.getElementById('file_alt_contrato')||{})._b64 || null,
+        alt_contrato_nome:    (document.getElementById('file_alt_contrato')||{})._nome || null,
+        alt_contrato_tipo:    (document.getElementById('file_alt_contrato')||{})._tipo || null,
       },
       timestamp: new Date().toISOString(),
       origem: 'aliar-cadastro-contratual'
@@ -1141,13 +1155,12 @@
     btn.textContent = 'Enviando…';
 
     try {
-      // Remove binários de arquivo para não estourar URL; registra só se teve upload
-      const _p = Object.assign({}, payload, { documentos: {
-        logotipo:        payload.documentos && payload.documentos.logotipo        ? '(arquivo enviado)' : null,
-        contrato_social: payload.documentos && payload.documentos.contrato_social ? '(arquivo enviado)' : null,
-      }});
-      const _enc = btoa(unescape(encodeURIComponent(JSON.stringify(_p))));
-      await fetch('https://script.google.com/macros/s/AKfycbz2NhwPbzUfFI5XzJ5mtk9utbqALcQCLdBt3_sS_hafYcpGq-9qPn8Vc6aPdQgijMlx/exec?data=' + encodeURIComponent(_enc), { mode: 'no-cors' });
+      await fetch('https://script.google.com/macros/s/AKfycbz2NhwPbzUfFI5XzJ5mtk9utbqALcQCLdBt3_sS_hafYcpGq-9qPn8Vc6aPdQgijMlx/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
     } catch (_) { /* prossegue mesmo se webhook não configurado */ }
 
     // Passa logos para a página de obrigado via sessionStorage
