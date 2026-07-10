@@ -953,7 +953,9 @@
 
     fetch(SCRIPT_URL, {
       method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload),
+      redirect: 'follow',
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
