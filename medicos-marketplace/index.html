@@ -230,7 +230,13 @@
     .card-medico:hover { border-color: var(--gold); transform: translateY(-2px); }
     .card-top { padding: 18px; display: flex; gap: 12px; border-bottom: 1px solid var(--border); }
     .medico-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gold-glow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--gold-light); flex-shrink: 0; overflow: hidden; }
-    .medico-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .medico-avatar img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+    /* Lightbox */
+    #lightbox { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); align-items: center; justify-content: center; }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: min(480px, 90vw); max-height: 90vh; border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 0 60px rgba(0,0,0,0.6); }
+    #lightbox-close { position: absolute; top: 20px; right: 24px; font-size: 28px; color: var(--text-muted); cursor: pointer; line-height: 1; transition: color 0.2s; }
+    #lightbox-close:hover { color: var(--text-white); }
     .medico-info { flex: 1; min-width: 0; }
     .medico-nome { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .medico-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
@@ -355,6 +361,12 @@
   </style>
 </head>
 <body>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="fecharLightbox()">
+  <span id="lightbox-close">&times;</span>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+</div>
 
 <header>
   <div>
@@ -692,7 +704,8 @@
       if (d.emerg) linhasValores += '<tr><td>' + h(n) + ' Emerg.</td><td>R$ ' + h(d.emerg) + '</td><td class="sla">' + h(d.slaEmerg) + 'h</td></tr>';
     });
     var badges = exames.map(function(e) { return '<span class="badge-exame">' + h(e) + '</span>'; }).join('');
-    var fotoHtml = m['Foto URL'] ? '<img src="' + driveImgUrl(m['Foto URL']) + '" alt="" onerror="this.style.display=\'none\'">' : h(gerarIniciais(m['Nome'] || ''));
+    var fotoSrc  = m['Foto URL'] ? driveImgUrl(m['Foto URL']) : '';
+    var fotoHtml = fotoSrc ? '<img src="' + fotoSrc + '" alt="" onclick="abrirLightbox(this)" onerror="this.style.display=\'none\'">' : h(gerarIniciais(m['Nome'] || ''));
     var dias = (m['Dias Atendimento'] || '').replace(/,\s*/g, ' · ');
     var disp = dias ? '<div class="disponibilidade"><i class="ti ti-calendar"></i><span>' + h(m['Horário'] || '') + '<br>' + h(dias) + '</span></div>' : '';
     var card = document.createElement('div');
@@ -891,6 +904,21 @@
     var m = (url || '').match(/\/d\/([a-zA-Z0-9_-]+)/);
     return m ? 'https://lh3.googleusercontent.com/d/' + m[1] : url;
   }
+
+  function abrirLightbox(imgEl) {
+    document.getElementById('lightbox-img').src = imgEl.src;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function fecharLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') fecharLightbox();
+  });
 
   function gerarIniciais(nome) {
     return nome.split(' ').filter(function(p) { return p.length > 2; })
