@@ -13,22 +13,21 @@
       --bg-secondary: #111827;
       --bg-card:      #161e2e;
       --bg-input:     #0e1520;
-      --border:       rgba(141, 122, 82, 0.35);
+      --border:       rgba(141,122,82,0.35);
       --border-focus: #8d7a52;
       --gold:         #8d7a52;
       --gold-light:   #a89877;
-      --gold-dark:    #6b5a3e;
-      --gold-glow:    rgba(141, 122, 82, 0.13);
+      --gold-glow:    rgba(141,122,82,0.13);
       --text-white:   #f9f9f9;
       --text-muted:   #8a9bb0;
       --text-label:   #c8d4e0;
       --success:      #10b981;
+      --danger:       #ef4444;
       --radius:       12px;
       --radius-sm:    8px;
+      --sidebar-w:    220px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       background: var(--bg-primary);
       color: var(--text-white);
@@ -36,23 +35,25 @@
       font-size: 15px;
       line-height: 1.6;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     /* ── HEADER ── */
     header {
-      background: rgba(22, 30, 46, 0.95);
+      background: rgba(22,30,46,0.97);
       border-bottom: 1px solid var(--border);
-      padding: 18px 32px;
+      padding: 14px 24px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 200;
       backdrop-filter: blur(8px);
     }
-    .logo-text { font-size: 20px; font-weight: 800; color: var(--text-white); letter-spacing: -0.5px; }
-    .logo-sub  { font-size: 11px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; }
+    .logo-text { font-size: 18px; font-weight: 800; color: var(--text-white); letter-spacing: -0.5px; }
+    .logo-sub  { font-size: 10px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; }
     .header-badge {
       margin-left: auto;
       background: var(--gold-glow);
@@ -62,356 +63,292 @@
       font-weight: 600;
       padding: 4px 12px;
       border-radius: 20px;
-      letter-spacing: 0.5px;
     }
 
-    /* ── HERO ── */
+    /* ── LAYOUT ── */
+    .app-body {
+      display: flex;
+      flex: 1;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      position: sticky;
+      top: 53px;
+      height: calc(100vh - 53px);
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar-section {
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 8px;
+      margin-bottom: 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item i { font-size: 16px; flex-shrink: 0; }
+    .nav-item:hover { background: var(--gold-glow); color: var(--text-white); }
+    .nav-item.active {
+      background: var(--gold-glow);
+      color: var(--gold-light);
+      border-left: 3px solid var(--gold);
+    }
+
+    /* ── CONTEÚDO PRINCIPAL ── */
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+
+    /* Seções (ativas/inativas) */
+    .secao { display: none; }
+    .secao.ativa { display: block; }
+
+    /* ── SEÇÃO MÉDICOS ── */
     .hero {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 24px 24px;
+      padding: 32px 28px 20px;
     }
-    .hero h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
     .hero h1 em { font-style: normal; color: var(--gold-light); }
-    .hero p { color: var(--text-muted); font-size: 14px; }
+    .hero p { color: var(--text-muted); font-size: 13px; }
 
-    /* ── FILTROS ── */
-    .filtros {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px 24px;
-    }
+    .filtros { padding: 0 28px 20px; }
     .filtros-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px 24px;
+      padding: 18px 20px;
       display: flex;
       align-items: flex-end;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
     }
-    .filtro-grupo { display: flex; flex-direction: column; gap: 6px; min-width: 160px; }
-    .filtro-grupo label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-label);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .filtro-grupo { display: flex; flex-direction: column; gap: 5px; min-width: 150px; }
+    .filtro-grupo > label {
+      font-size: 10px; font-weight: 600; color: var(--text-label);
+      text-transform: uppercase; letter-spacing: 0.5px;
     }
     .filtro-grupo input[type="text"] {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-white);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      padding: 9px 12px;
-      outline: none;
-      transition: border-color 0.2s;
-      min-width: 160px;
+      background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-white);
+      font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 11px;
+      outline: none; transition: border-color 0.2s; min-width: 150px;
     }
     .filtro-grupo input[type="text"]:focus { border-color: var(--border-focus); }
 
-    /* ── MULTISELECT ── */
-    .multiselect {
-      position: relative;
-      min-width: 180px;
-    }
+    /* Multiselect */
+    .multiselect { position: relative; min-width: 170px; }
     .ms-toggle {
-      width: 100%;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-white);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      padding: 9px 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      transition: border-color 0.2s;
-      text-align: left;
+      width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-white);
+      font-family: 'Inter', sans-serif; font-size: 13px; padding: 8px 11px;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: space-between; gap: 6px; transition: border-color 0.2s; text-align: left;
     }
     .ms-toggle:hover, .multiselect.open .ms-toggle { border-color: var(--border-focus); }
-    .ms-toggle i { font-size: 14px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+    .ms-toggle i { font-size: 13px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
     .multiselect.open .ms-toggle i { transform: rotate(180deg); }
     .ms-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .ms-count {
-      background: var(--gold);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 10px;
-      flex-shrink: 0;
-    }
-
+    .ms-count { background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; flex-shrink: 0; }
     .ms-dropdown {
-      display: none;
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      right: 0;
-      background: var(--bg-card);
-      border: 1px solid var(--border-focus);
-      border-radius: var(--radius-sm);
-      z-index: 200;
-      max-height: 240px;
-      overflow-y: auto;
-      padding: 6px 0;
+      display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--bg-card); border: 1px solid var(--border-focus); border-radius: var(--radius-sm);
+      z-index: 300; max-height: 220px; overflow-y: auto; padding: 4px 0;
       box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
     .multiselect.open .ms-dropdown { display: block; }
-
     .ms-dropdown label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--text-white);
-      text-transform: none;
-      letter-spacing: 0;
-      cursor: pointer;
-      transition: background 0.15s;
+      display: flex; align-items: center; gap: 9px; padding: 7px 12px;
+      font-size: 13px; font-weight: 400; color: var(--text-white);
+      text-transform: none; letter-spacing: 0; cursor: pointer; transition: background 0.15s;
     }
     .ms-dropdown label:hover { background: var(--gold-glow); }
-    .ms-dropdown input[type="checkbox"] {
-      accent-color: var(--gold);
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      cursor: pointer;
-    }
+    .ms-dropdown input[type="checkbox"] { accent-color: var(--gold); width: 13px; height: 13px; flex-shrink: 0; cursor: pointer; }
 
-    /* ── CHIPS DISPONIBILIDADE ── */
-    .chips-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    /* Chips disponibilidade */
+    .chips-row { display: flex; gap: 7px; flex-wrap: wrap; }
     .chip-toggle {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 7px 14px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
-      white-space: nowrap;
+      display: flex; align-items: center; gap: 5px; background: var(--bg-input);
+      border: 1px solid var(--border); border-radius: 20px; padding: 6px 12px;
+      font-size: 12px; font-weight: 500; color: var(--text-muted); cursor: pointer;
+      transition: all 0.2s; user-select: none; white-space: nowrap;
     }
     .chip-toggle input { display: none; }
     .chip-toggle:hover { border-color: var(--gold); color: var(--gold-light); }
-    .chip-toggle.ativo {
-      background: var(--gold-glow);
-      border-color: var(--gold);
-      color: var(--gold-light);
-    }
-    .chip-toggle i { font-size: 13px; }
+    .chip-toggle.ativo { background: var(--gold-glow); border-color: var(--gold); color: var(--gold-light); }
+    .chip-toggle i { font-size: 12px; }
 
     .btn-limpar {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      padding: 9px 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 17px;
+      background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 13px;
+      padding: 8px 14px; cursor: pointer; transition: all 0.2s; display: flex;
+      align-items: center; gap: 5px; margin-top: 15px;
     }
     .btn-limpar:hover { border-color: var(--gold); color: var(--gold-light); }
 
-    /* ── RESULTADO ── */
-    .resultado-header {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+    .resultado-header { padding: 0 28px 14px; display: flex; align-items: center; justify-content: space-between; }
     .resultado-count { font-size: 13px; color: var(--text-muted); }
     .resultado-count strong { color: var(--gold-light); }
 
-    /* ── GRID CARDS ── */
     .cards-grid {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px 80px;
+      padding: 0 28px 60px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 18px;
     }
 
-    /* ── CARD MÉDICO ── */
-    .card-medico {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color 0.2s, transform 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
+    /* Cards médico */
+    .card-medico { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s, transform 0.2s; display: flex; flex-direction: column; }
     .card-medico:hover { border-color: var(--gold); transform: translateY(-2px); }
-
-    .card-top {
-      padding: 20px;
-      display: flex;
-      gap: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-    .medico-avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--gold-glow);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--gold-light);
-      flex-shrink: 0;
-      overflow: hidden;
-    }
+    .card-top { padding: 18px; display: flex; gap: 12px; border-bottom: 1px solid var(--border); }
+    .medico-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gold-glow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--gold-light); flex-shrink: 0; overflow: hidden; }
     .medico-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .medico-info { flex: 1; min-width: 0; }
-    .medico-nome {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-white);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .medico-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .medico-esp {
-      font-size: 11px;
-      color: var(--gold-light);
-      margin-top: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .card-body { padding: 16px 20px; flex: 1; }
-
-    .exames-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-    .badge-exame {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
-      background: var(--gold-glow);
-      border: 1px solid var(--border);
-      color: var(--gold-light);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .valores-tabela { width: 100%; font-size: 12px; border-collapse: collapse; }
-    .valores-tabela thead th {
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      padding: 0 0 6px;
-      text-align: left;
-    }
+    .medico-nome { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .medico-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .medico-esp { font-size: 11px; color: var(--gold-light); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-body { padding: 14px 18px; flex: 1; }
+    .exames-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+    .badge-exame { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; background: var(--gold-glow); border: 1px solid var(--border); color: var(--gold-light); text-transform: uppercase; letter-spacing: 0.5px; }
+    .valores-tabela { width: 100%; font-size: 11px; border-collapse: collapse; }
+    .valores-tabela thead th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; padding: 0 0 5px; text-align: left; }
     .valores-tabela thead th:not(:first-child) { text-align: right; }
     .valores-tabela tbody tr { border-top: 1px solid rgba(141,122,82,0.12); }
-    .valores-tabela tbody td { padding: 6px 0; color: var(--text-label); }
+    .valores-tabela tbody td { padding: 5px 0; color: var(--text-label); }
     .valores-tabela tbody td:not(:first-child) { text-align: right; color: var(--success); font-weight: 500; }
-    .valores-tabela tbody td.sla { color: var(--text-muted); font-size: 11px; }
-    .valores-tabela tbody td:first-child { font-weight: 500; }
+    .valores-tabela tbody td.sla { color: var(--text-muted); font-size: 10px; }
+    .disponibilidade { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(141,122,82,0.15); display: flex; align-items: flex-start; gap: 7px; font-size: 11px; color: var(--text-muted); }
+    .disponibilidade i { color: var(--gold); font-size: 13px; margin-top: 2px; flex-shrink: 0; }
+    .card-footer { padding: 12px 18px; border-top: 1px solid var(--border); }
+    .btn-whatsapp { display: flex; align-items: center; justify-content: center; gap: 5px; background: rgba(37,211,102,0.12); border: 1px solid rgba(37,211,102,0.3); border-radius: var(--radius-sm); color: #25d366; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 7px 12px; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+    .btn-whatsapp:hover { background: rgba(37,211,102,0.2); }
 
-    .disponibilidade {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(141,122,82,0.15);
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    .disponibilidade i { color: var(--gold); font-size: 14px; margin-top: 2px; flex-shrink: 0; }
+    /* ── SEÇÃO INDICAÇÕES ── */
+    .ind-header { padding: 32px 28px 20px; }
+    .ind-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .ind-header h1 em { font-style: normal; color: var(--gold-light); }
+    .ind-header p { color: var(--text-muted); font-size: 13px; }
 
-    .card-footer {
-      padding: 14px 20px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 10px;
+    .stats-row { display: flex; gap: 14px; padding: 0 28px 24px; flex-wrap: wrap; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; flex: 1; min-width: 140px; }
+    .stat-card .stat-val { font-size: 28px; font-weight: 800; color: var(--gold-light); line-height: 1; }
+    .stat-card .stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    .ind-grid { padding: 0 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+    .ind-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden;
     }
-    .btn-whatsapp {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      background: rgba(37, 211, 102, 0.12);
-      border: 1px solid rgba(37, 211, 102, 0.3);
-      border-radius: var(--radius-sm);
-      color: #25d366;
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 8px 12px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s;
+    .ind-card-header {
+      padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; user-select: none; transition: background 0.15s;
     }
-    .btn-whatsapp:hover { background: rgba(37, 211, 102, 0.2); }
+    .ind-card-header:hover { background: rgba(141,122,82,0.06); }
+    .ind-rank {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--gold-glow);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: var(--gold-light); flex-shrink: 0;
+    }
+    .ind-rank.top1 { background: rgba(234,179,8,0.18); border-color: #eab308; color: #eab308; }
+    .ind-rank.top2 { background: rgba(148,163,184,0.18); border-color: #94a3b8; color: #94a3b8; }
+    .ind-rank.top3 { background: rgba(180,120,60,0.18); border-color: #b4783c; color: #b4783c; }
+    .ind-info { flex: 1; min-width: 0; }
+    .ind-apelido { font-size: 14px; font-weight: 700; }
+    .ind-nome { font-size: 11px; color: var(--gold-light); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ind-nome.nao-mapeado { color: var(--text-muted); font-style: italic; }
+    .ind-total { text-align: right; flex-shrink: 0; }
+    .ind-total .num { font-size: 24px; font-weight: 800; color: var(--gold-light); line-height: 1; }
+    .ind-total .lbl { font-size: 10px; color: var(--text-muted); }
+    .ind-chevron { color: var(--text-muted); font-size: 16px; flex-shrink: 0; transition: transform 0.2s; }
+    .ind-card.aberto .ind-chevron { transform: rotate(180deg); }
+
+    .ind-deals { display: none; border-top: 1px solid var(--border); }
+    .ind-card.aberto .ind-deals { display: block; }
+    .ind-deals-list { max-height: 220px; overflow-y: auto; }
+    .ind-deal-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 18px; font-size: 12px; border-bottom: 1px solid rgba(141,122,82,0.08);
+    }
+    .ind-deal-row:last-child { border-bottom: none; }
+    .ind-deal-nome { color: var(--text-label); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ind-deal-meta { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+    .ind-deal-data { color: var(--text-muted); font-size: 11px; }
+    .ind-deal-valor { color: var(--success); font-weight: 600; }
+
+    /* De-Para editor */
+    .depara-section { padding: 40px 28px 60px; }
+    .depara-section h2 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .depara-section p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .depara-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .depara-table { width: 100%; border-collapse: collapse; }
+    .depara-table thead th { padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: left; border-bottom: 1px solid var(--border); }
+    .depara-table tbody tr { border-bottom: 1px solid rgba(141,122,82,0.1); }
+    .depara-table tbody tr:last-child { border-bottom: none; }
+    .depara-table tbody td { padding: 10px 16px; font-size: 13px; }
+    .depara-table tbody td:first-child { color: var(--gold-light); font-weight: 600; width: 40%; }
+    .depara-input {
+      background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text-white); font-family: 'Inter', sans-serif; font-size: 13px;
+      padding: 7px 10px; outline: none; transition: border-color 0.2s; width: 100%;
+    }
+    .depara-input:focus { border-color: var(--border-focus); }
+    .depara-footer { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+    .btn-salvar-depara {
+      background: var(--gold); border: none; border-radius: var(--radius-sm); color: #fff;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      padding: 9px 20px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 7px;
+    }
+    .btn-salvar-depara:hover { background: var(--gold-light); }
+    .btn-salvar-depara:disabled { opacity: 0.5; cursor: default; }
 
     /* ── ESTADOS VAZIOS ── */
-    .estado-vazio {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 64px 24px;
-      text-align: center;
-      display: none;
-    }
+    .estado-vazio { padding: 60px 28px; text-align: center; display: none; }
     .estado-vazio.visivel { display: block; }
-    .estado-vazio .icone { font-size: 40px; color: var(--text-muted); margin-bottom: 16px; }
-    .estado-vazio h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-    .estado-vazio p { color: var(--text-muted); font-size: 14px; }
+    .estado-vazio .icone { font-size: 38px; color: var(--text-muted); margin-bottom: 14px; }
+    .estado-vazio h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .estado-vazio p { color: var(--text-muted); font-size: 13px; }
 
     /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 24px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 12px;
-    }
+    footer { border-top: 1px solid var(--border); padding: 20px 28px; text-align: center; color: var(--text-muted); font-size: 12px; }
     footer strong { color: var(--gold-light); }
 
     /* ── RESPONSIVO ── */
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
       .filtros-card { flex-direction: column; }
       .filtro-grupo, .multiselect { min-width: 100%; }
-      header { padding: 14px 16px; }
-      .cards-grid { grid-template-columns: 1fr; }
+      .cards-grid, .ind-grid { grid-template-columns: 1fr; padding: 0 16px 40px; }
+      .hero, .filtros, .resultado-header, .ind-header, .stats-row, .depara-section { padding-left: 16px; padding-right: 16px; }
+      .stats-row { padding-left: 16px; padding-right: 16px; }
     }
   </style>
 </head>
@@ -425,170 +362,485 @@
   <span class="header-badge">Book de Médicos — ALIAR</span>
 </header>
 
-<div class="hero">
-  <h1>Book de <em>Médicos Parceiros</em></h1>
-  <p>Consulte nossa rede credenciada e encontre o perfil ideal para o seu cliente.</p>
-</div>
+<div class="app-body">
 
-<!-- FILTROS -->
-<div class="filtros">
-  <div class="filtros-card">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navegação</div>
+      <button class="nav-item active" id="nav-medicos" onclick="navegarPara('medicos')">
+        <i class="ti ti-stethoscope"></i> Médicos
+      </button>
+      <button class="nav-item" id="nav-indicacoes" onclick="navegarPara('indicacoes')">
+        <i class="ti ti-chart-bar"></i> Indicações
+      </button>
+    </div>
+  </aside>
 
-    <!-- Estado — multiselect -->
-    <div class="filtro-grupo">
-      <label>Estado (UF)</label>
-      <div class="multiselect" id="ms-estado">
-        <button type="button" class="ms-toggle" onclick="toggleMS('ms-estado')">
-          <span class="ms-label" id="ms-estado-label">Todos os estados</span>
-          <i class="ti ti-chevron-down"></i>
-        </button>
-        <div class="ms-dropdown">
-          <label><input type="checkbox" value="AC" onchange="onMSChange('ms-estado')"> AC</label>
-          <label><input type="checkbox" value="AL" onchange="onMSChange('ms-estado')"> AL</label>
-          <label><input type="checkbox" value="AM" onchange="onMSChange('ms-estado')"> AM</label>
-          <label><input type="checkbox" value="AP" onchange="onMSChange('ms-estado')"> AP</label>
-          <label><input type="checkbox" value="BA" onchange="onMSChange('ms-estado')"> BA</label>
-          <label><input type="checkbox" value="CE" onchange="onMSChange('ms-estado')"> CE</label>
-          <label><input type="checkbox" value="DF" onchange="onMSChange('ms-estado')"> DF</label>
-          <label><input type="checkbox" value="ES" onchange="onMSChange('ms-estado')"> ES</label>
-          <label><input type="checkbox" value="GO" onchange="onMSChange('ms-estado')"> GO</label>
-          <label><input type="checkbox" value="MA" onchange="onMSChange('ms-estado')"> MA</label>
-          <label><input type="checkbox" value="MG" onchange="onMSChange('ms-estado')"> MG</label>
-          <label><input type="checkbox" value="MS" onchange="onMSChange('ms-estado')"> MS</label>
-          <label><input type="checkbox" value="MT" onchange="onMSChange('ms-estado')"> MT</label>
-          <label><input type="checkbox" value="PA" onchange="onMSChange('ms-estado')"> PA</label>
-          <label><input type="checkbox" value="PB" onchange="onMSChange('ms-estado')"> PB</label>
-          <label><input type="checkbox" value="PE" onchange="onMSChange('ms-estado')"> PE</label>
-          <label><input type="checkbox" value="PI" onchange="onMSChange('ms-estado')"> PI</label>
-          <label><input type="checkbox" value="PR" onchange="onMSChange('ms-estado')"> PR</label>
-          <label><input type="checkbox" value="RJ" onchange="onMSChange('ms-estado')"> RJ</label>
-          <label><input type="checkbox" value="RN" onchange="onMSChange('ms-estado')"> RN</label>
-          <label><input type="checkbox" value="RO" onchange="onMSChange('ms-estado')"> RO</label>
-          <label><input type="checkbox" value="RR" onchange="onMSChange('ms-estado')"> RR</label>
-          <label><input type="checkbox" value="RS" onchange="onMSChange('ms-estado')"> RS</label>
-          <label><input type="checkbox" value="SC" onchange="onMSChange('ms-estado')"> SC</label>
-          <label><input type="checkbox" value="SE" onchange="onMSChange('ms-estado')"> SE</label>
-          <label><input type="checkbox" value="SP" onchange="onMSChange('ms-estado')"> SP</label>
-          <label><input type="checkbox" value="TO" onchange="onMSChange('ms-estado')"> TO</label>
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+
+    <!-- ═══════════════════ SEÇÃO MÉDICOS ═══════════════════ -->
+    <div class="secao ativa" id="secao-medicos">
+
+      <div class="hero">
+        <h1>Book de <em>Médicos Parceiros</em></h1>
+        <p>Consulte nossa rede credenciada e encontre o perfil ideal para o seu cliente.</p>
+      </div>
+
+      <div class="filtros">
+        <div class="filtros-card">
+          <!-- Estado multiselect -->
+          <div class="filtro-grupo">
+            <label>Estado (UF)</label>
+            <div class="multiselect" id="ms-estado">
+              <button type="button" class="ms-toggle" onclick="toggleMS('ms-estado')">
+                <span class="ms-label" id="ms-estado-label">Todos os estados</span>
+                <i class="ti ti-chevron-down"></i>
+              </button>
+              <div class="ms-dropdown">
+                <label><input type="checkbox" value="AC" onchange="onMSChange('ms-estado')"> AC</label>
+                <label><input type="checkbox" value="AL" onchange="onMSChange('ms-estado')"> AL</label>
+                <label><input type="checkbox" value="AM" onchange="onMSChange('ms-estado')"> AM</label>
+                <label><input type="checkbox" value="AP" onchange="onMSChange('ms-estado')"> AP</label>
+                <label><input type="checkbox" value="BA" onchange="onMSChange('ms-estado')"> BA</label>
+                <label><input type="checkbox" value="CE" onchange="onMSChange('ms-estado')"> CE</label>
+                <label><input type="checkbox" value="DF" onchange="onMSChange('ms-estado')"> DF</label>
+                <label><input type="checkbox" value="ES" onchange="onMSChange('ms-estado')"> ES</label>
+                <label><input type="checkbox" value="GO" onchange="onMSChange('ms-estado')"> GO</label>
+                <label><input type="checkbox" value="MA" onchange="onMSChange('ms-estado')"> MA</label>
+                <label><input type="checkbox" value="MG" onchange="onMSChange('ms-estado')"> MG</label>
+                <label><input type="checkbox" value="MS" onchange="onMSChange('ms-estado')"> MS</label>
+                <label><input type="checkbox" value="MT" onchange="onMSChange('ms-estado')"> MT</label>
+                <label><input type="checkbox" value="PA" onchange="onMSChange('ms-estado')"> PA</label>
+                <label><input type="checkbox" value="PB" onchange="onMSChange('ms-estado')"> PB</label>
+                <label><input type="checkbox" value="PE" onchange="onMSChange('ms-estado')"> PE</label>
+                <label><input type="checkbox" value="PI" onchange="onMSChange('ms-estado')"> PI</label>
+                <label><input type="checkbox" value="PR" onchange="onMSChange('ms-estado')"> PR</label>
+                <label><input type="checkbox" value="RJ" onchange="onMSChange('ms-estado')"> RJ</label>
+                <label><input type="checkbox" value="RN" onchange="onMSChange('ms-estado')"> RN</label>
+                <label><input type="checkbox" value="RO" onchange="onMSChange('ms-estado')"> RO</label>
+                <label><input type="checkbox" value="RR" onchange="onMSChange('ms-estado')"> RR</label>
+                <label><input type="checkbox" value="RS" onchange="onMSChange('ms-estado')"> RS</label>
+                <label><input type="checkbox" value="SC" onchange="onMSChange('ms-estado')"> SC</label>
+                <label><input type="checkbox" value="SE" onchange="onMSChange('ms-estado')"> SE</label>
+                <label><input type="checkbox" value="SP" onchange="onMSChange('ms-estado')"> SP</label>
+                <label><input type="checkbox" value="TO" onchange="onMSChange('ms-estado')"> TO</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exame multiselect -->
+          <div class="filtro-grupo">
+            <label>Exame</label>
+            <div class="multiselect" id="ms-exame">
+              <button type="button" class="ms-toggle" onclick="toggleMS('ms-exame')">
+                <span class="ms-label" id="ms-exame-label">Todos os exames</span>
+                <i class="ti ti-chevron-down"></i>
+              </button>
+              <div class="ms-dropdown">
+                <label><input type="checkbox" value="ECG"    onchange="onMSChange('ms-exame')"> ECG</label>
+                <label><input type="checkbox" value="HOLTER" onchange="onMSChange('ms-exame')"> Holter</label>
+                <label><input type="checkbox" value="MAPA"   onchange="onMSChange('ms-exame')"> MAPA</label>
+                <label><input type="checkbox" value="TE"     onchange="onMSChange('ms-exame')"> Teste Ergométrico</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nome -->
+          <div class="filtro-grupo">
+            <label>Buscar por nome</label>
+            <input type="text" id="filtro-nome" placeholder="Nome do médico…" oninput="aplicarFiltros()">
+          </div>
+
+          <!-- Disponibilidade -->
+          <div class="filtro-grupo">
+            <label>Disponibilidade</label>
+            <div class="chips-row">
+              <label class="chip-toggle" id="chip-fds" onclick="toggleChip('chip-fds','filtro-fds')">
+                <input type="checkbox" id="filtro-fds">
+                <i class="ti ti-calendar-week"></i> Fins de semana
+              </label>
+              <label class="chip-toggle" id="chip-noturno" onclick="toggleChip('chip-noturno','filtro-noturno')">
+                <input type="checkbox" id="filtro-noturno">
+                <i class="ti ti-moon"></i> Após 18h
+              </label>
+            </div>
+          </div>
+
+          <button class="btn-limpar" onclick="limparFiltros()">
+            <i class="ti ti-x"></i> Limpar
+          </button>
         </div>
       </div>
+
+      <div class="resultado-header">
+        <span class="resultado-count" id="contador">Carregando…</span>
+      </div>
+
+      <div class="estado-vazio visivel" id="estado-carregando">
+        <div class="icone"><i class="ti ti-loader-2"></i></div>
+        <h3>Carregando médicos…</h3>
+        <p>Buscando dados da plataforma.</p>
+      </div>
+      <div class="estado-vazio" id="estado-erro">
+        <div class="icone"><i class="ti ti-wifi-off"></i></div>
+        <h3>Erro ao carregar</h3>
+        <p>Não foi possível buscar os dados. Verifique a conexão e recarregue.</p>
+      </div>
+      <div class="estado-vazio" id="estado-vazio">
+        <div class="icone"><i class="ti ti-search-off"></i></div>
+        <h3>Nenhum médico encontrado</h3>
+        <p>Tente ajustar os filtros.</p>
+      </div>
+
+      <div class="cards-grid" id="cards-grid" style="display:none"></div>
     </div>
 
-    <!-- Exame — multiselect -->
-    <div class="filtro-grupo">
-      <label>Exame</label>
-      <div class="multiselect" id="ms-exame">
-        <button type="button" class="ms-toggle" onclick="toggleMS('ms-exame')">
-          <span class="ms-label" id="ms-exame-label">Todos os exames</span>
-          <i class="ti ti-chevron-down"></i>
-        </button>
-        <div class="ms-dropdown">
-          <label><input type="checkbox" value="ECG"    onchange="onMSChange('ms-exame')"> ECG</label>
-          <label><input type="checkbox" value="HOLTER" onchange="onMSChange('ms-exame')"> Holter</label>
-          <label><input type="checkbox" value="MAPA"   onchange="onMSChange('ms-exame')"> MAPA</label>
-          <label><input type="checkbox" value="TE"     onchange="onMSChange('ms-exame')"> Teste Ergométrico</label>
+    <!-- ═══════════════════ SEÇÃO INDICAÇÕES ════════════════ -->
+    <div class="secao" id="secao-indicacoes">
+
+      <div class="ind-header">
+        <h1>Gestão de <em>Indicações</em></h1>
+        <p>Resumo de clientes ganhos no funil [Closer] TD por médico/instituição parceira.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="ind-stats" style="display:none">
+        <div class="stat-card">
+          <div class="stat-val" id="stat-total">—</div>
+          <div class="stat-lbl">Indicações ganhas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-parceiros">—</div>
+          <div class="stat-lbl">Parceiros com indicação</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-media">—</div>
+          <div class="stat-lbl">Média por parceiro</div>
         </div>
       </div>
-    </div>
 
-    <!-- Nome -->
-    <div class="filtro-grupo">
-      <label>Buscar por nome</label>
-      <input type="text" id="filtro-nome" placeholder="Nome do médico…" oninput="aplicarFiltros()">
-    </div>
-
-    <!-- Disponibilidade -->
-    <div class="filtro-grupo">
-      <label>Disponibilidade</label>
-      <div class="chips-row">
-        <label class="chip-toggle" id="chip-fds" onclick="toggleChip('chip-fds','filtro-fds')">
-          <input type="checkbox" id="filtro-fds">
-          <i class="ti ti-calendar-week"></i> Fins de semana
-        </label>
-        <label class="chip-toggle" id="chip-noturno" onclick="toggleChip('chip-noturno','filtro-noturno')">
-          <input type="checkbox" id="filtro-noturno">
-          <i class="ti ti-moon"></i> Após 18h
-        </label>
+      <!-- Estado carregando -->
+      <div class="estado-vazio visivel" id="ind-carregando">
+        <div class="icone"><i class="ti ti-loader-2"></i></div>
+        <h3>Buscando indicações…</h3>
+        <p>Consultando o RD Station. Pode levar alguns segundos.</p>
       </div>
-    </div>
+      <div class="estado-vazio" id="ind-erro">
+        <div class="icone"><i class="ti ti-wifi-off"></i></div>
+        <h3>Erro ao carregar</h3>
+        <p id="ind-erro-msg">Não foi possível buscar os dados do RD Station.</p>
+      </div>
+      <div class="estado-vazio" id="ind-vazio">
+        <div class="icone"><i class="ti ti-chart-bar-off"></i></div>
+        <h3>Nenhuma indicação encontrada</h3>
+        <p>Não há deals ganhos com o campo "Instituição SAAS" preenchido.</p>
+      </div>
 
-    <button class="btn-limpar" onclick="limparFiltros()">
-      <i class="ti ti-x"></i> Limpar
-    </button>
-  </div>
-</div>
+      <!-- Grid de cards -->
+      <div class="ind-grid" id="ind-grid" style="display:none"></div>
 
-<!-- RESULTADO -->
-<div class="resultado-header">
-  <span class="resultado-count" id="contador">Carregando…</span>
-</div>
+      <!-- De-Para editor -->
+      <div class="depara-section" id="depara-section" style="display:none">
+        <h2>Configuração De-Para</h2>
+        <p>Associe o apelido usado no CRM ao nome completo do médico/instituição cadastrado neste sistema.</p>
+        <div class="depara-card">
+          <table class="depara-table">
+            <thead>
+              <tr>
+                <th>Apelido no CRM</th>
+                <th>Nome no Cadastro (Book)</th>
+              </tr>
+            </thead>
+            <tbody id="depara-tbody"></tbody>
+          </table>
+          <div class="depara-footer">
+            <button class="btn-salvar-depara" id="btn-salvar-depara" onclick="salvarDepara()">
+              <i class="ti ti-device-floppy"></i> Salvar De-Para
+            </button>
+          </div>
+        </div>
+      </div>
 
-<!-- CARREGANDO -->
-<div class="estado-vazio visivel" id="estado-carregando">
-  <div class="icone"><i class="ti ti-loader-2"></i></div>
-  <h3>Carregando médicos…</h3>
-  <p>Buscando dados da plataforma.</p>
-</div>
+    </div><!-- /secao-indicacoes -->
 
-<!-- ERRO -->
-<div class="estado-vazio" id="estado-erro">
-  <div class="icone"><i class="ti ti-wifi-off"></i></div>
-  <h3>Erro ao carregar</h3>
-  <p>Não foi possível buscar os dados. Verifique a conexão e recarregue a página.</p>
-</div>
-
-<!-- VAZIO -->
-<div class="estado-vazio" id="estado-vazio">
-  <div class="icone"><i class="ti ti-search-off"></i></div>
-  <h3>Nenhum médico encontrado</h3>
-  <p>Tente ajustar os filtros para ver mais resultados.</p>
-</div>
-
-<!-- GRID DE CARDS -->
-<div class="cards-grid" id="cards-grid"></div>
-
-<footer>
-  <strong>ECGNow Telecardiologia</strong> · Book de Médicos Parceiros ALIAR ·
-  <a href="mailto:contato@ecgnow.com.br" style="color:var(--gold-light);text-decoration:none;">contato@ecgnow.com.br</a>
-</footer>
+    <footer>
+      <strong>ECGNow Telecardiologia</strong> · Book de Médicos Parceiros ALIAR ·
+      <a href="mailto:contato@ecgnow.com.br" style="color:var(--gold-light);text-decoration:none;">contato@ecgnow.com.br</a>
+    </footer>
+  </div><!-- /main-content -->
+</div><!-- /app-body -->
 
 <script>
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6UC1mPiz4KY_YQu80RA3CLhZJs-E5zwXK4PISG5vu8vwwOjV4lQfjwb8CcRKpBbNmqQ/exec';
 
-  var todosMedicos = [];
+  var todosMedicos    = [];
+  var indicacoesCarregadas = false;
 
+  // ── INICIALIZAÇÃO ──
   window.addEventListener('DOMContentLoaded', function() {
     carregarMedicos();
-    // Fecha multiselects ao clicar fora
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.multiselect')) {
-        document.querySelectorAll('.multiselect.open').forEach(function(el) {
-          el.classList.remove('open');
-        });
+        document.querySelectorAll('.multiselect.open').forEach(function(el) { el.classList.remove('open'); });
       }
     });
   });
 
+  // ── NAVEGAÇÃO ──
+  function navegarPara(secao) {
+    document.querySelectorAll('.secao').forEach(function(s) { s.classList.remove('ativa'); });
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    document.getElementById('secao-' + secao).classList.add('ativa');
+    document.getElementById('nav-' + secao).classList.add('active');
+
+    if (secao === 'indicacoes' && !indicacoesCarregadas) {
+      carregarIndicacoes();
+    }
+  }
+
+  // ════════════════ SEÇÃO MÉDICOS ════════════════
+
   function carregarMedicos() {
-    mostrarEstado('carregando');
+    mostrarEstadoMed('carregando');
     fetch(SCRIPT_URL)
-      .then(function(res) { return res.json(); })
+      .then(function(r) { return r.json(); })
       .then(function(resp) {
         if (!resp.success) throw new Error(resp.message);
         todosMedicos = resp.data || [];
         aplicarFiltros();
-        mostrarEstado('');
+        mostrarEstadoMed('');
       })
-      .catch(function() {
-        mostrarEstado('erro');
+      .catch(function() { mostrarEstadoMed('erro'); });
+  }
+
+  function aplicarFiltros() {
+    var estados = getSelectedMS('ms-estado');
+    var exames  = getSelectedMS('ms-exame');
+    var nome    = document.getElementById('filtro-nome').value.trim().toLowerCase();
+    var fds     = document.getElementById('filtro-fds').checked;
+    var noturno = document.getElementById('filtro-noturno').checked;
+
+    var resultado = todosMedicos.filter(function(m) {
+      var matchEstado = estados.length === 0 ||
+        estados.some(function(uf) { return (m['Estado'] || '').toUpperCase() === uf; });
+      var matchExame = exames.length === 0 ||
+        exames.every(function(ex) { return (m['Exames'] || '').toUpperCase().includes(ex); });
+      var matchNome  = !nome || (m['Nome'] || '').toLowerCase().includes(nome);
+      var matchFds   = !fds  || /s[aá]bado|domingo/i.test(m['Dias Atendimento'] || '');
+      var matchNot   = !noturno || getEndHour(m['Horário'] || '') > 18;
+      return matchEstado && matchExame && matchNome && matchFds && matchNot;
+    });
+
+    renderizarCards(resultado);
+    document.getElementById('contador').innerHTML =
+      '<strong>' + resultado.length + '</strong> médico' + (resultado.length !== 1 ? 's' : '') +
+      ' encontrado' + (resultado.length !== 1 ? 's' : '');
+    if (resultado.length === 0 && todosMedicos.length > 0) mostrarEstadoMed('vazio');
+    else if (resultado.length > 0) mostrarEstadoMed('');
+  }
+
+  function getEndHour(h) {
+    var m = h.match(/(\d{1,2}):\d{2}\s*(?:$|[^0-9])/g);
+    if (m && m.length > 0) return parseInt(m[m.length-1].match(/(\d{1,2}):/)[1]);
+    var m2 = h.match(/(\d{1,2})\s*h?\s*$/i);
+    return m2 ? parseInt(m2[1]) : 0;
+  }
+
+  function limparFiltros() {
+    document.querySelectorAll('.ms-dropdown input[type="checkbox"]').forEach(function(cb) { cb.checked = false; });
+    onMSChange('ms-estado'); onMSChange('ms-exame');
+    document.getElementById('filtro-nome').value = '';
+    document.getElementById('filtro-fds').checked = false;
+    document.getElementById('filtro-noturno').checked = false;
+    document.getElementById('chip-fds').classList.remove('ativo');
+    document.getElementById('chip-noturno').classList.remove('ativo');
+    aplicarFiltros();
+  }
+
+  function mostrarEstadoMed(estado) {
+    document.getElementById('estado-carregando').classList.toggle('visivel', estado === 'carregando');
+    document.getElementById('estado-erro').classList.toggle('visivel', estado === 'erro');
+    document.getElementById('estado-vazio').classList.toggle('visivel', estado === 'vazio');
+    document.getElementById('cards-grid').style.display = (estado === '') ? 'grid' : 'none';
+  }
+
+  function renderizarCards(medicos) {
+    var grid = document.getElementById('cards-grid');
+    grid.innerHTML = ''; grid.style.display = 'grid';
+    medicos.forEach(function(m) { grid.appendChild(criarCard(m)); });
+  }
+
+  function criarCard(m) {
+    var exames = (m['Exames'] || '').split(',').map(function(e) { return e.trim(); }).filter(Boolean);
+    var tel    = (m['Telefone'] || '').replace(/\D/g, '');
+    var waUrl  = tel ? 'https://wa.me/55' + tel : '#';
+    var exameMap = {
+      'ECG':    { amb: m['ECG Valor Amb (R$)'],    slaAmb: m['ECG SLA Amb'],    emerg: m['ECG Valor Emerg (R$)'],    slaEmerg: m['ECG SLA Emerg'] },
+      'HOLTER': { amb: m['Holter Valor Amb (R$)'], slaAmb: m['Holter SLA Amb'], emerg: m['Holter Valor Emerg (R$)'], slaEmerg: m['Holter SLA Emerg'] },
+      'MAPA':   { amb: m['MAPA Valor Amb (R$)'],   slaAmb: m['MAPA SLA Amb'],   emerg: m['MAPA Valor Emerg (R$)'],  slaEmerg: m['MAPA SLA Emerg'] },
+      'TE':     { amb: m['TE Valor Amb (R$)'],     slaAmb: m['TE SLA Amb'],     emerg: m['TE Valor Emerg (R$)'],    slaEmerg: m['TE SLA Emerg'] },
+    };
+    var linhasValores = '';
+    exames.forEach(function(ex) {
+      var d = exameMap[ex.toUpperCase()]; if (!d) return;
+      var n = ex === 'TE' ? 'T. Ergométrico' : ex;
+      if (d.amb)   linhasValores += '<tr><td>' + h(n) + ' Amb.</td><td>R$ ' + h(d.amb) + '</td><td class="sla">' + h(d.slaAmb) + 'h</td></tr>';
+      if (d.emerg) linhasValores += '<tr><td>' + h(n) + ' Emerg.</td><td>R$ ' + h(d.emerg) + '</td><td class="sla">' + h(d.slaEmerg) + 'h</td></tr>';
+    });
+    var badges = exames.map(function(e) { return '<span class="badge-exame">' + h(e) + '</span>'; }).join('');
+    var fotoHtml = m['Foto URL'] ? '<img src="' + h(m['Foto URL']) + '" alt="" onerror="this.style.display=\'none\'">' : h(gerarIniciais(m['Nome'] || ''));
+    var dias = (m['Dias Atendimento'] || '').replace(/,\s*/g, ' · ');
+    var disp = dias ? '<div class="disponibilidade"><i class="ti ti-calendar"></i><span>' + h(m['Horário'] || '') + '<br>' + h(dias) + '</span></div>' : '';
+    var card = document.createElement('div');
+    card.className = 'card-medico';
+    card.innerHTML =
+      '<div class="card-top"><div class="medico-avatar">' + fotoHtml + '</div>' +
+      '<div class="medico-info"><div class="medico-nome">' + h(m['Nome'] || '—') + '</div>' +
+      '<div class="medico-meta">CRM ' + h(m['CRM'] || '') + ' · ' + h(m['Estado'] || '') + '</div>' +
+      '<div class="medico-esp">' + h(m['Especialização'] || '') + '</div></div></div>' +
+      '<div class="card-body"><div class="exames-row">' + badges + '</div>' +
+      (linhasValores ? '<table class="valores-tabela"><thead><tr><th>Exame</th><th>Valor</th><th>SLA</th></tr></thead><tbody>' + linhasValores + '</tbody></table>' : '') +
+      disp + '</div>' +
+      '<div class="card-footer"><a class="btn-whatsapp" href="' + h(waUrl) + '" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> WhatsApp</a></div>';
+    return card;
+  }
+
+  // ════════════════ SEÇÃO INDICAÇÕES ════════════════
+
+  function carregarIndicacoes() {
+    document.getElementById('ind-carregando').classList.add('visivel');
+    document.getElementById('ind-erro').classList.remove('visivel');
+    document.getElementById('ind-vazio').classList.remove('visivel');
+    document.getElementById('ind-grid').style.display = 'none';
+    document.getElementById('ind-stats').style.display = 'none';
+    document.getElementById('depara-section').style.display = 'none';
+
+    fetch(SCRIPT_URL + '?action=indicacoes')
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        document.getElementById('ind-carregando').classList.remove('visivel');
+        if (!resp.success) throw new Error(resp.message);
+        var dados = resp.data || [];
+        indicacoesCarregadas = true;
+        renderizarIndicacoes(dados);
+      })
+      .catch(function(err) {
+        document.getElementById('ind-carregando').classList.remove('visivel');
+        document.getElementById('ind-erro').classList.add('visivel');
+        document.getElementById('ind-erro-msg').textContent = err.message || 'Erro ao buscar dados do RD Station.';
       });
   }
 
-  // ── Multiselect ──
+  function renderizarIndicacoes(dados) {
+    if (!dados.length) {
+      document.getElementById('ind-vazio').classList.add('visivel');
+      return;
+    }
+
+    // Stats
+    var totalInd  = dados.reduce(function(s, d) { return s + d.total; }, 0);
+    document.getElementById('stat-total').textContent    = totalInd;
+    document.getElementById('stat-parceiros').textContent = dados.length;
+    document.getElementById('stat-media').textContent    = (totalInd / dados.length).toFixed(1);
+    document.getElementById('ind-stats').style.display  = '';
+
+    // Cards
+    var grid = document.getElementById('ind-grid');
+    grid.innerHTML = ''; grid.style.display = 'grid';
+
+    dados.forEach(function(d, idx) {
+      var rankClass = idx === 0 ? 'top1' : idx === 1 ? 'top2' : idx === 2 ? 'top3' : '';
+      var nomeHtml  = d.nome_medico
+        ? '<div class="ind-nome">' + h(d.nome_medico) + '</div>'
+        : '<div class="ind-nome nao-mapeado">Não mapeado</div>';
+
+      var dealsHtml = d.deals.map(function(deal) {
+        var data  = deal.fechado_em ? new Date(deal.fechado_em).toLocaleDateString('pt-BR') : '—';
+        var valor = deal.valor ? 'R$ ' + Number(deal.valor).toLocaleString('pt-BR') : '';
+        return '<div class="ind-deal-row">' +
+          '<span class="ind-deal-nome">' + h(deal.nome) + '</span>' +
+          '<span class="ind-deal-meta">' +
+            (valor ? '<span class="ind-deal-valor">' + valor + '</span>' : '') +
+            '<span class="ind-deal-data">' + data + '</span>' +
+          '</span></div>';
+      }).join('');
+
+      var card = document.createElement('div');
+      card.className = 'ind-card';
+      card.innerHTML =
+        '<div class="ind-card-header" onclick="toggleIndCard(this)">' +
+          '<div class="ind-rank ' + rankClass + '">' + (idx + 1) + '</div>' +
+          '<div class="ind-info">' +
+            '<div class="ind-apelido">' + h(d.apelido) + '</div>' +
+            nomeHtml +
+          '</div>' +
+          '<div class="ind-total"><div class="num">' + d.total + '</div><div class="lbl">indicaç' + (d.total === 1 ? 'ão' : 'ões') + '</div></div>' +
+          '<i class="ti ti-chevron-down ind-chevron"></i>' +
+        '</div>' +
+        '<div class="ind-deals"><div class="ind-deals-list">' + dealsHtml + '</div></div>';
+      grid.appendChild(card);
+    });
+
+    // De-Para editor
+    renderizarDepara(dados);
+    document.getElementById('depara-section').style.display = '';
+  }
+
+  function toggleIndCard(header) {
+    header.parentElement.classList.toggle('aberto');
+  }
+
+  // ════════════════ DE-PARA ════════════════
+
+  function renderizarDepara(dados) {
+    var tbody = document.getElementById('depara-tbody');
+    tbody.innerHTML = '';
+    dados.forEach(function(d) {
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + h(d.apelido) + '</td>' +
+        '<td><input class="depara-input" data-apelido="' + h(d.apelido) + '" value="' + h(d.nome_medico) + '" placeholder="Nome completo do médico…"></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function salvarDepara() {
+    var btn = document.getElementById('btn-salvar-depara');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader-2"></i> Salvando…';
+
+    var entradas = Array.from(document.querySelectorAll('.depara-input')).map(function(inp) {
+      return { apelido: inp.dataset.apelido, nome_medico: inp.value.trim() };
+    });
+
+    fetch(SCRIPT_URL + '?action=salvar-depara', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ entradas: entradas }),
+      redirect: 'follow',
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(resp) {
+      btn.innerHTML = '<i class="ti ti-check"></i> ' + (resp.success ? 'Salvo!' : 'Erro: ' + resp.message);
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-device-floppy"></i> Salvar De-Para';
+        if (resp.success) { indicacoesCarregadas = false; carregarIndicacoes(); }
+      }, 2000);
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-device-floppy"></i> Salvar De-Para';
+    });
+  }
+
+  // ════════════════ MULTISELECT ════════════════
+
   function toggleMS(id) {
     var el = document.getElementById(id);
     var wasOpen = el.classList.contains('open');
-    // Fecha todos
     document.querySelectorAll('.multiselect.open').forEach(function(x) { x.classList.remove('open'); });
     if (!wasOpen) el.classList.add('open');
   }
@@ -601,12 +853,9 @@
   function onMSChange(id) {
     var selecionados = getSelectedMS(id);
     var labelEl = document.getElementById(id + '-label');
-    var toggle = document.querySelector('#' + id + ' .ms-toggle');
-
-    // Remove badge antigo
+    var toggle  = document.querySelector('#' + id + ' .ms-toggle');
     var oldBadge = toggle.querySelector('.ms-count');
     if (oldBadge) oldBadge.remove();
-
     if (selecionados.length === 0) {
       labelEl.textContent = id === 'ms-estado' ? 'Todos os estados' : 'Todos os exames';
     } else if (selecionados.length <= 3) {
@@ -614,187 +863,31 @@
     } else {
       labelEl.textContent = selecionados.slice(0, 2).join(', ');
       var badge = document.createElement('span');
-      badge.className = 'ms-count';
-      badge.textContent = '+' + (selecionados.length - 2);
+      badge.className = 'ms-count'; badge.textContent = '+' + (selecionados.length - 2);
       toggle.insertBefore(badge, toggle.querySelector('i'));
     }
     aplicarFiltros();
   }
 
-  // ── Chips de disponibilidade ──
   function toggleChip(chipId, inputId) {
-    var chip = document.getElementById(chipId);
     var input = document.getElementById(inputId);
-    // O onclick dispara antes do checkbox mudar, então lemos o estado atual e invertemos
     setTimeout(function() {
-      chip.classList.toggle('ativo', input.checked);
+      document.getElementById(chipId).classList.toggle('ativo', input.checked);
       aplicarFiltros();
     }, 0);
   }
 
-  // ── Filtros ──
-  function aplicarFiltros() {
-    var estados = getSelectedMS('ms-estado');
-    var exames  = getSelectedMS('ms-exame');
-    var nome    = document.getElementById('filtro-nome').value.trim().toLowerCase();
-    var fds     = document.getElementById('filtro-fds').checked;
-    var noturno = document.getElementById('filtro-noturno').checked;
-
-    var resultado = todosMedicos.filter(function(m) {
-      // Estado: qualquer dos selecionados
-      var matchEstado = estados.length === 0 ||
-        estados.some(function(uf) { return (m['Estado'] || '').toUpperCase() === uf; });
-
-      // Exame: todos os selecionados devem estar presentes
-      var matchExame = exames.length === 0 ||
-        exames.every(function(ex) { return (m['Exames'] || '').toUpperCase().includes(ex); });
-
-      // Nome
-      var matchNome = !nome || (m['Nome'] || '').toLowerCase().includes(nome);
-
-      // Fins de semana
-      var matchFds = !fds || /s[aá]bado|domingo/i.test(m['Dias Atendimento'] || '');
-
-      // Noturno: extrai hora de término do campo Horário e verifica se > 18
-      var matchNoturno = !noturno || getEndHour(m['Horário'] || '') > 18;
-
-      return matchEstado && matchExame && matchNome && matchFds && matchNoturno;
-    });
-
-    renderizarCards(resultado);
-    document.getElementById('contador').innerHTML =
-      '<strong>' + resultado.length + '</strong> médico' + (resultado.length !== 1 ? 's' : '') +
-      ' encontrado' + (resultado.length !== 1 ? 's' : '');
-
-    if (resultado.length === 0 && todosMedicos.length > 0) mostrarEstado('vazio');
-    else if (resultado.length > 0) mostrarEstado('');
-  }
-
-  function getEndHour(horario) {
-    // Tenta capturar último horário no formato HH:MM ou HHh
-    var matches = horario.match(/(\d{1,2}):\d{2}\s*(?:$|[^0-9])/g);
-    if (matches && matches.length > 0) {
-      var last = matches[matches.length - 1];
-      return parseInt(last.match(/(\d{1,2}):/)[1]);
-    }
-    // Fallback: qualquer número de 1-2 dígitos no final
-    var m2 = horario.match(/(\d{1,2})\s*h?\s*$/i);
-    return m2 ? parseInt(m2[1]) : 0;
-  }
-
-  function limparFiltros() {
-    // Desmarca todos os checkboxes dos multiselects
-    document.querySelectorAll('.ms-dropdown input[type="checkbox"]').forEach(function(cb) {
-      cb.checked = false;
-    });
-    onMSChange('ms-estado');
-    onMSChange('ms-exame');
-    document.getElementById('filtro-nome').value = '';
-    document.getElementById('filtro-fds').checked = false;
-    document.getElementById('filtro-noturno').checked = false;
-    document.getElementById('chip-fds').classList.remove('ativo');
-    document.getElementById('chip-noturno').classList.remove('ativo');
-    aplicarFiltros();
-  }
-
-  function mostrarEstado(estado) {
-    document.getElementById('estado-carregando').classList.toggle('visivel', estado === 'carregando');
-    document.getElementById('estado-erro').classList.toggle('visivel', estado === 'erro');
-    document.getElementById('estado-vazio').classList.toggle('visivel', estado === 'vazio');
-    document.getElementById('cards-grid').style.display = (estado === '') ? 'grid' : 'none';
-  }
-
-  // ── Renderização ──
-  function renderizarCards(medicos) {
-    var grid = document.getElementById('cards-grid');
-    grid.innerHTML = '';
-    grid.style.display = 'grid';
-    medicos.forEach(function(m) { grid.appendChild(criarCard(m)); });
-  }
-
-  function criarCard(m) {
-    var exames = (m['Exames'] || '').split(',').map(function(e) { return e.trim(); }).filter(Boolean);
-    var iniciais = gerarIniciais(m['Nome'] || '');
-    var tel = (m['Telefone'] || '').replace(/\D/g, '');
-    var waUrl = tel ? 'https://wa.me/55' + tel : '#';
-
-    var exameMap = {
-      'ECG':    { amb: m['ECG Valor Amb (R$)'],    slaAmb: m['ECG SLA Amb'],    emerg: m['ECG Valor Emerg (R$)'],    slaEmerg: m['ECG SLA Emerg'] },
-      'HOLTER': { amb: m['Holter Valor Amb (R$)'], slaAmb: m['Holter SLA Amb'], emerg: m['Holter Valor Emerg (R$)'], slaEmerg: m['Holter SLA Emerg'] },
-      'MAPA':   { amb: m['MAPA Valor Amb (R$)'],   slaAmb: m['MAPA SLA Amb'],   emerg: m['MAPA Valor Emerg (R$)'],  slaEmerg: m['MAPA SLA Emerg'] },
-      'TE':     { amb: m['TE Valor Amb (R$)'],     slaAmb: m['TE SLA Amb'],     emerg: m['TE Valor Emerg (R$)'],    slaEmerg: m['TE SLA Emerg'] },
-    };
-
-    var linhasValores = '';
-    exames.forEach(function(ex) {
-      var dados = exameMap[ex.toUpperCase()];
-      if (!dados) return;
-      var exNome = ex === 'TE' ? 'T. Ergométrico' : ex;
-      if (dados.amb) {
-        linhasValores += '<tr><td>' + escapeHtml(exNome) + ' Amb.</td>' +
-          '<td>R$ ' + escapeHtml(dados.amb) + '</td>' +
-          '<td class="sla">' + escapeHtml(dados.slaAmb) + 'h</td></tr>';
-      }
-      if (dados.emerg) {
-        linhasValores += '<tr><td>' + escapeHtml(exNome) + ' Emerg.</td>' +
-          '<td>R$ ' + escapeHtml(dados.emerg) + '</td>' +
-          '<td class="sla">' + escapeHtml(dados.slaEmerg) + 'h</td></tr>';
-      }
-    });
-
-    var badges = exames.map(function(e) {
-      return '<span class="badge-exame">' + escapeHtml(e) + '</span>';
-    }).join('');
-
-    var fotoHtml = m['Foto URL']
-      ? '<img src="' + escapeHtml(m['Foto URL']) + '" alt="" onerror="this.style.display=\'none\'">'
-      : escapeHtml(iniciais);
-
-    var dias = (m['Dias Atendimento'] || '').replace(/,\s*/g, ' · ');
-    var disponibilidade = dias
-      ? '<div class="disponibilidade"><i class="ti ti-calendar"></i><span>' +
-          escapeHtml(m['Horário'] || '') + '<br>' + escapeHtml(dias) +
-        '</span></div>'
-      : '';
-
-    var card = document.createElement('div');
-    card.className = 'card-medico';
-    card.innerHTML =
-      '<div class="card-top">' +
-        '<div class="medico-avatar">' + fotoHtml + '</div>' +
-        '<div class="medico-info">' +
-          '<div class="medico-nome">' + escapeHtml(m['Nome'] || '—') + '</div>' +
-          '<div class="medico-meta">CRM ' + escapeHtml(m['CRM'] || '') + ' · ' + escapeHtml(m['Estado'] || '') + '</div>' +
-          '<div class="medico-esp">' + escapeHtml(m['Especialização'] || '') + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card-body">' +
-        '<div class="exames-row">' + badges + '</div>' +
-        (linhasValores
-          ? '<table class="valores-tabela"><thead><tr><th>Exame</th><th>Valor</th><th>SLA</th></tr></thead><tbody>' + linhasValores + '</tbody></table>'
-          : '') +
-        disponibilidade +
-      '</div>' +
-      '<div class="card-footer">' +
-        '<a class="btn-whatsapp" href="' + escapeHtml(waUrl) + '" target="_blank" rel="noopener">' +
-          '<i class="ti ti-brand-whatsapp"></i> WhatsApp' +
-        '</a>' +
-      '</div>';
-
-    return card;
-  }
+  // ════════════════ UTILITÁRIOS ════════════════
 
   function gerarIniciais(nome) {
     return nome.split(' ').filter(function(p) { return p.length > 2; })
       .slice(0, 2).map(function(p) { return p[0]; }).join('').toUpperCase() || '?';
   }
 
-  function escapeHtml(str) {
+  function h(str) {
     return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 </script>
 </body>
