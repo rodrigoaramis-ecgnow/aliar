@@ -321,6 +321,8 @@
       padding: 7px 10px; outline: none; transition: border-color 0.2s; width: 100%;
     }
     .depara-input:focus { border-color: var(--border-focus); }
+    select.depara-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9bb0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+    select.depara-input option { background: var(--bg-card); }
     .depara-footer { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
     .btn-salvar-depara {
       background: var(--gold); border: none; border-radius: var(--radius-sm); color: #fff;
@@ -690,7 +692,7 @@
       if (d.emerg) linhasValores += '<tr><td>' + h(n) + ' Emerg.</td><td>R$ ' + h(d.emerg) + '</td><td class="sla">' + h(d.slaEmerg) + 'h</td></tr>';
     });
     var badges = exames.map(function(e) { return '<span class="badge-exame">' + h(e) + '</span>'; }).join('');
-    var fotoHtml = m['Foto URL'] ? '<img src="' + h(m['Foto URL']) + '" alt="" onerror="this.style.display=\'none\'">' : h(gerarIniciais(m['Nome'] || ''));
+    var fotoHtml = m['Foto URL'] ? '<img src="' + driveImgUrl(m['Foto URL']) + '" alt="" onerror="this.style.display=\'none\'">' : h(gerarIniciais(m['Nome'] || ''));
     var dias = (m['Dias Atendimento'] || '').replace(/,\s*/g, ' · ');
     var disp = dias ? '<div class="disponibilidade"><i class="ti ti-calendar"></i><span>' + h(m['Horário'] || '') + '<br>' + h(dias) + '</span></div>' : '';
     var card = document.createElement('div');
@@ -797,11 +799,17 @@
   function renderizarDepara(dados) {
     var tbody = document.getElementById('depara-tbody');
     tbody.innerHTML = '';
+    var opcoes = '<option value="">— Selecione —</option>' +
+      todosMedicos.map(function(m) {
+        return '<option value="' + h(m['Nome'] || '') + '">' + h(m['Nome'] || '') + '</option>';
+      }).join('');
+
     dados.forEach(function(d) {
+      var opts = opcoes.replace('value="' + h(d.nome_medico) + '"', 'value="' + h(d.nome_medico) + '" selected');
       var tr = document.createElement('tr');
       tr.innerHTML =
         '<td>' + h(d.apelido) + '</td>' +
-        '<td><input class="depara-input" data-apelido="' + h(d.apelido) + '" value="' + h(d.nome_medico) + '" placeholder="Nome completo do médico…"></td>';
+        '<td><select class="depara-input" data-apelido="' + h(d.apelido) + '">' + opts + '</select></td>';
       tbody.appendChild(tr);
     });
   }
@@ -878,6 +886,11 @@
   }
 
   // ════════════════ UTILITÁRIOS ════════════════
+
+  function driveImgUrl(url) {
+    var m = (url || '').match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? 'https://lh3.googleusercontent.com/d/' + m[1] : url;
+  }
 
   function gerarIniciais(nome) {
     return nome.split(' ').filter(function(p) { return p.length > 2; })
