@@ -99,8 +99,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .filtro-grupo select,
-    .filtro-grupo input {
+    .filtro-grupo input[type="text"] {
       background: var(--bg-input);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -112,9 +111,113 @@
       transition: border-color 0.2s;
       min-width: 160px;
     }
-    .filtro-grupo select:focus,
-    .filtro-grupo input:focus { border-color: var(--border-focus); }
-    .filtro-grupo select option { background: var(--bg-card); }
+    .filtro-grupo input[type="text"]:focus { border-color: var(--border-focus); }
+
+    /* ── MULTISELECT ── */
+    .multiselect {
+      position: relative;
+      min-width: 180px;
+    }
+    .ms-toggle {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-white);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      padding: 9px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transition: border-color 0.2s;
+      text-align: left;
+    }
+    .ms-toggle:hover, .multiselect.open .ms-toggle { border-color: var(--border-focus); }
+    .ms-toggle i { font-size: 14px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+    .multiselect.open .ms-toggle i { transform: rotate(180deg); }
+    .ms-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ms-count {
+      background: var(--gold);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .ms-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-focus);
+      border-radius: var(--radius-sm);
+      z-index: 200;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 6px 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .multiselect.open .ms-dropdown { display: block; }
+
+    .ms-dropdown label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-white);
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ms-dropdown label:hover { background: var(--gold-glow); }
+    .ms-dropdown input[type="checkbox"] {
+      accent-color: var(--gold);
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* ── CHIPS DISPONIBILIDADE ── */
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .chip-toggle input { display: none; }
+    .chip-toggle:hover { border-color: var(--gold); color: var(--gold-light); }
+    .chip-toggle.ativo {
+      background: var(--gold-glow);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+    .chip-toggle i { font-size: 13px; }
 
     .btn-limpar {
       background: transparent;
@@ -144,10 +247,7 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-    .resultado-count {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
+    .resultado-count { font-size: 13px; color: var(--text-muted); }
     .resultado-count strong { color: var(--gold-light); }
 
     /* ── GRID CARDS ── */
@@ -203,11 +303,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .medico-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .medico-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
     .medico-esp {
       font-size: 11px;
       color: var(--gold-light);
@@ -219,13 +315,7 @@
 
     .card-body { padding: 16px 20px; flex: 1; }
 
-    /* Exames badges */
-    .exames-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
+    .exames-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
     .badge-exame {
       font-size: 10px;
       font-weight: 700;
@@ -238,12 +328,7 @@
       letter-spacing: 0.5px;
     }
 
-    /* Tabela valores */
-    .valores-tabela {
-      width: 100%;
-      font-size: 12px;
-      border-collapse: collapse;
-    }
+    .valores-tabela { width: 100%; font-size: 12px; border-collapse: collapse; }
     .valores-tabela thead th {
       color: var(--text-muted);
       font-weight: 600;
@@ -255,33 +340,22 @@
     }
     .valores-tabela thead th:not(:first-child) { text-align: right; }
     .valores-tabela tbody tr { border-top: 1px solid rgba(141,122,82,0.12); }
-    .valores-tabela tbody td {
-      padding: 6px 0;
-      color: var(--text-label);
-    }
-    .valores-tabela tbody td:not(:first-child) {
-      text-align: right;
-      color: var(--success);
-      font-weight: 500;
-    }
-    .valores-tabela tbody td.sla {
-      color: var(--text-muted);
-      font-size: 11px;
-    }
+    .valores-tabela tbody td { padding: 6px 0; color: var(--text-label); }
+    .valores-tabela tbody td:not(:first-child) { text-align: right; color: var(--success); font-weight: 500; }
+    .valores-tabela tbody td.sla { color: var(--text-muted); font-size: 11px; }
     .valores-tabela tbody td:first-child { font-weight: 500; }
 
-    /* Disponibilidade */
     .disponibilidade {
       margin-top: 14px;
       padding-top: 12px;
       border-top: 1px solid rgba(141,122,82,0.15);
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
       font-size: 12px;
       color: var(--text-muted);
     }
-    .disponibilidade i { color: var(--gold); font-size: 14px; }
+    .disponibilidade i { color: var(--gold); font-size: 14px; margin-top: 2px; flex-shrink: 0; }
 
     .card-footer {
       padding: 14px 20px;
@@ -309,7 +383,7 @@
     }
     .btn-whatsapp:hover { background: rgba(37, 211, 102, 0.2); }
 
-    /* ── ESTADOS VAZIOS / CARREGANDO ── */
+    /* ── ESTADOS VAZIOS ── */
     .estado-vazio {
       max-width: 1100px;
       margin: 0 auto;
@@ -335,8 +409,7 @@
     /* ── RESPONSIVO ── */
     @media (max-width: 600px) {
       .filtros-card { flex-direction: column; }
-      .filtro-grupo { min-width: 100%; }
-      .filtro-grupo select, .filtro-grupo input { min-width: 100%; }
+      .filtro-grupo, .multiselect { min-width: 100%; }
       header { padding: 14px 16px; }
       .cards-grid { grid-template-columns: 1fr; }
     }
@@ -360,35 +433,87 @@
 <!-- FILTROS -->
 <div class="filtros">
   <div class="filtros-card">
+
+    <!-- Estado — multiselect -->
     <div class="filtro-grupo">
       <label>Estado (UF)</label>
-      <select id="filtro-estado" onchange="aplicarFiltros()">
-        <option value="">Todos os estados</option>
-        <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
-        <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-        <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
-        <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
-        <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
-        <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
-        <option>SE</option><option>SP</option><option>TO</option>
-      </select>
+      <div class="multiselect" id="ms-estado">
+        <button type="button" class="ms-toggle" onclick="toggleMS('ms-estado')">
+          <span class="ms-label" id="ms-estado-label">Todos os estados</span>
+          <i class="ti ti-chevron-down"></i>
+        </button>
+        <div class="ms-dropdown">
+          <label><input type="checkbox" value="AC" onchange="onMSChange('ms-estado')"> AC</label>
+          <label><input type="checkbox" value="AL" onchange="onMSChange('ms-estado')"> AL</label>
+          <label><input type="checkbox" value="AM" onchange="onMSChange('ms-estado')"> AM</label>
+          <label><input type="checkbox" value="AP" onchange="onMSChange('ms-estado')"> AP</label>
+          <label><input type="checkbox" value="BA" onchange="onMSChange('ms-estado')"> BA</label>
+          <label><input type="checkbox" value="CE" onchange="onMSChange('ms-estado')"> CE</label>
+          <label><input type="checkbox" value="DF" onchange="onMSChange('ms-estado')"> DF</label>
+          <label><input type="checkbox" value="ES" onchange="onMSChange('ms-estado')"> ES</label>
+          <label><input type="checkbox" value="GO" onchange="onMSChange('ms-estado')"> GO</label>
+          <label><input type="checkbox" value="MA" onchange="onMSChange('ms-estado')"> MA</label>
+          <label><input type="checkbox" value="MG" onchange="onMSChange('ms-estado')"> MG</label>
+          <label><input type="checkbox" value="MS" onchange="onMSChange('ms-estado')"> MS</label>
+          <label><input type="checkbox" value="MT" onchange="onMSChange('ms-estado')"> MT</label>
+          <label><input type="checkbox" value="PA" onchange="onMSChange('ms-estado')"> PA</label>
+          <label><input type="checkbox" value="PB" onchange="onMSChange('ms-estado')"> PB</label>
+          <label><input type="checkbox" value="PE" onchange="onMSChange('ms-estado')"> PE</label>
+          <label><input type="checkbox" value="PI" onchange="onMSChange('ms-estado')"> PI</label>
+          <label><input type="checkbox" value="PR" onchange="onMSChange('ms-estado')"> PR</label>
+          <label><input type="checkbox" value="RJ" onchange="onMSChange('ms-estado')"> RJ</label>
+          <label><input type="checkbox" value="RN" onchange="onMSChange('ms-estado')"> RN</label>
+          <label><input type="checkbox" value="RO" onchange="onMSChange('ms-estado')"> RO</label>
+          <label><input type="checkbox" value="RR" onchange="onMSChange('ms-estado')"> RR</label>
+          <label><input type="checkbox" value="RS" onchange="onMSChange('ms-estado')"> RS</label>
+          <label><input type="checkbox" value="SC" onchange="onMSChange('ms-estado')"> SC</label>
+          <label><input type="checkbox" value="SE" onchange="onMSChange('ms-estado')"> SE</label>
+          <label><input type="checkbox" value="SP" onchange="onMSChange('ms-estado')"> SP</label>
+          <label><input type="checkbox" value="TO" onchange="onMSChange('ms-estado')"> TO</label>
+        </div>
+      </div>
     </div>
+
+    <!-- Exame — multiselect -->
     <div class="filtro-grupo">
       <label>Exame</label>
-      <select id="filtro-exame" onchange="aplicarFiltros()">
-        <option value="">Todos os exames</option>
-        <option value="ECG">ECG</option>
-        <option value="HOLTER">Holter</option>
-        <option value="MAPA">MAPA</option>
-        <option value="TE">Teste Ergométrico</option>
-      </select>
+      <div class="multiselect" id="ms-exame">
+        <button type="button" class="ms-toggle" onclick="toggleMS('ms-exame')">
+          <span class="ms-label" id="ms-exame-label">Todos os exames</span>
+          <i class="ti ti-chevron-down"></i>
+        </button>
+        <div class="ms-dropdown">
+          <label><input type="checkbox" value="ECG"    onchange="onMSChange('ms-exame')"> ECG</label>
+          <label><input type="checkbox" value="HOLTER" onchange="onMSChange('ms-exame')"> Holter</label>
+          <label><input type="checkbox" value="MAPA"   onchange="onMSChange('ms-exame')"> MAPA</label>
+          <label><input type="checkbox" value="TE"     onchange="onMSChange('ms-exame')"> Teste Ergométrico</label>
+        </div>
+      </div>
     </div>
+
+    <!-- Nome -->
     <div class="filtro-grupo">
       <label>Buscar por nome</label>
       <input type="text" id="filtro-nome" placeholder="Nome do médico…" oninput="aplicarFiltros()">
     </div>
+
+    <!-- Disponibilidade -->
+    <div class="filtro-grupo">
+      <label>Disponibilidade</label>
+      <div class="chips-row">
+        <label class="chip-toggle" id="chip-fds" onclick="toggleChip('chip-fds','filtro-fds')">
+          <input type="checkbox" id="filtro-fds">
+          <i class="ti ti-calendar-week"></i> Fins de semana
+        </label>
+        <label class="chip-toggle" id="chip-noturno" onclick="toggleChip('chip-noturno','filtro-noturno')">
+          <input type="checkbox" id="filtro-noturno">
+          <i class="ti ti-moon"></i> Após 18h
+        </label>
+      </div>
+    </div>
+
     <button class="btn-limpar" onclick="limparFiltros()">
-      <i class="ti ti-x"></i> Limpar filtros
+      <i class="ti ti-x"></i> Limpar
     </button>
   </div>
 </div>
@@ -428,21 +553,24 @@
 </footer>
 
 <script>
-  // ──────────────────────────────────────────────────
-  // CONFIGURAÇÃO — mesma URL do Apps Script
-  // ──────────────────────────────────────────────────
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6UC1mPiz4KY_YQu80RA3CLhZJs-E5zwXK4PISG5vu8vwwOjV4lQfjwb8CcRKpBbNmqQ/exec';
 
   var todosMedicos = [];
 
-  // ── Inicialização ──
   window.addEventListener('DOMContentLoaded', function() {
     carregarMedicos();
+    // Fecha multiselects ao clicar fora
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.multiselect')) {
+        document.querySelectorAll('.multiselect.open').forEach(function(el) {
+          el.classList.remove('open');
+        });
+      }
+    });
   });
 
   function carregarMedicos() {
     mostrarEstado('carregando');
-
     fetch(SCRIPT_URL)
       .then(function(res) { return res.json(); })
       .then(function(resp) {
@@ -456,34 +584,116 @@
       });
   }
 
+  // ── Multiselect ──
+  function toggleMS(id) {
+    var el = document.getElementById(id);
+    var wasOpen = el.classList.contains('open');
+    // Fecha todos
+    document.querySelectorAll('.multiselect.open').forEach(function(x) { x.classList.remove('open'); });
+    if (!wasOpen) el.classList.add('open');
+  }
+
+  function getSelectedMS(id) {
+    return Array.from(document.querySelectorAll('#' + id + ' input[type="checkbox"]:checked'))
+      .map(function(cb) { return cb.value; });
+  }
+
+  function onMSChange(id) {
+    var selecionados = getSelectedMS(id);
+    var labelEl = document.getElementById(id + '-label');
+    var toggle = document.querySelector('#' + id + ' .ms-toggle');
+
+    // Remove badge antigo
+    var oldBadge = toggle.querySelector('.ms-count');
+    if (oldBadge) oldBadge.remove();
+
+    if (selecionados.length === 0) {
+      labelEl.textContent = id === 'ms-estado' ? 'Todos os estados' : 'Todos os exames';
+    } else if (selecionados.length <= 3) {
+      labelEl.textContent = selecionados.join(', ');
+    } else {
+      labelEl.textContent = selecionados.slice(0, 2).join(', ');
+      var badge = document.createElement('span');
+      badge.className = 'ms-count';
+      badge.textContent = '+' + (selecionados.length - 2);
+      toggle.insertBefore(badge, toggle.querySelector('i'));
+    }
+    aplicarFiltros();
+  }
+
+  // ── Chips de disponibilidade ──
+  function toggleChip(chipId, inputId) {
+    var chip = document.getElementById(chipId);
+    var input = document.getElementById(inputId);
+    // O onclick dispara antes do checkbox mudar, então lemos o estado atual e invertemos
+    setTimeout(function() {
+      chip.classList.toggle('ativo', input.checked);
+      aplicarFiltros();
+    }, 0);
+  }
+
   // ── Filtros ──
   function aplicarFiltros() {
-    var estado = document.getElementById('filtro-estado').value.trim().toUpperCase();
-    var exame  = document.getElementById('filtro-exame').value.trim().toUpperCase();
-    var nome   = document.getElementById('filtro-nome').value.trim().toLowerCase();
+    var estados = getSelectedMS('ms-estado');
+    var exames  = getSelectedMS('ms-exame');
+    var nome    = document.getElementById('filtro-nome').value.trim().toLowerCase();
+    var fds     = document.getElementById('filtro-fds').checked;
+    var noturno = document.getElementById('filtro-noturno').checked;
 
     var resultado = todosMedicos.filter(function(m) {
-      var matchEstado = !estado || (m['Estado'] || '').toUpperCase() === estado;
-      var matchExame  = !exame  || (m['Exames'] || '').toUpperCase().includes(exame);
-      var matchNome   = !nome   || (m['Nome'] || '').toLowerCase().includes(nome);
-      return matchEstado && matchExame && matchNome;
+      // Estado: qualquer dos selecionados
+      var matchEstado = estados.length === 0 ||
+        estados.some(function(uf) { return (m['Estado'] || '').toUpperCase() === uf; });
+
+      // Exame: todos os selecionados devem estar presentes
+      var matchExame = exames.length === 0 ||
+        exames.every(function(ex) { return (m['Exames'] || '').toUpperCase().includes(ex); });
+
+      // Nome
+      var matchNome = !nome || (m['Nome'] || '').toLowerCase().includes(nome);
+
+      // Fins de semana
+      var matchFds = !fds || /s[aá]bado|domingo/i.test(m['Dias Atendimento'] || '');
+
+      // Noturno: extrai hora de término do campo Horário e verifica se > 18
+      var matchNoturno = !noturno || getEndHour(m['Horário'] || '') > 18;
+
+      return matchEstado && matchExame && matchNome && matchFds && matchNoturno;
     });
 
     renderizarCards(resultado);
     document.getElementById('contador').innerHTML =
-      '<strong>' + resultado.length + '</strong> médico' + (resultado.length !== 1 ? 's' : '') + ' encontrado' + (resultado.length !== 1 ? 's' : '');
+      '<strong>' + resultado.length + '</strong> médico' + (resultado.length !== 1 ? 's' : '') +
+      ' encontrado' + (resultado.length !== 1 ? 's' : '');
 
-    if (resultado.length === 0 && todosMedicos.length > 0) {
-      mostrarEstado('vazio');
-    } else if (resultado.length > 0) {
-      mostrarEstado('');
+    if (resultado.length === 0 && todosMedicos.length > 0) mostrarEstado('vazio');
+    else if (resultado.length > 0) mostrarEstado('');
+  }
+
+  function getEndHour(horario) {
+    // Tenta capturar último horário no formato HH:MM ou HHh
+    var matches = horario.match(/(\d{1,2}):\d{2}\s*(?:$|[^0-9])/g);
+    if (matches && matches.length > 0) {
+      var last = matches[matches.length - 1];
+      return parseInt(last.match(/(\d{1,2}):/)[1]);
     }
+    // Fallback: qualquer número de 1-2 dígitos no final
+    var m2 = horario.match(/(\d{1,2})\s*h?\s*$/i);
+    return m2 ? parseInt(m2[1]) : 0;
   }
 
   function limparFiltros() {
-    document.getElementById('filtro-estado').value = '';
-    document.getElementById('filtro-exame').value  = '';
-    document.getElementById('filtro-nome').value   = '';
+    // Desmarca todos os checkboxes dos multiselects
+    document.querySelectorAll('.ms-dropdown input[type="checkbox"]').forEach(function(cb) {
+      cb.checked = false;
+    });
+    onMSChange('ms-estado');
+    onMSChange('ms-exame');
+    document.getElementById('filtro-nome').value = '';
+    document.getElementById('filtro-fds').checked = false;
+    document.getElementById('filtro-noturno').checked = false;
+    document.getElementById('chip-fds').classList.remove('ativo');
+    document.getElementById('chip-noturno').classList.remove('ativo');
     aplicarFiltros();
   }
 
@@ -494,15 +704,12 @@
     document.getElementById('cards-grid').style.display = (estado === '') ? 'grid' : 'none';
   }
 
-  // ── Renderização dos cards ──
+  // ── Renderização ──
   function renderizarCards(medicos) {
     var grid = document.getElementById('cards-grid');
     grid.innerHTML = '';
     grid.style.display = 'grid';
-
-    medicos.forEach(function(m) {
-      grid.appendChild(criarCard(m));
-    });
+    medicos.forEach(function(m) { grid.appendChild(criarCard(m)); });
   }
 
   function criarCard(m) {
@@ -511,8 +718,6 @@
     var tel = (m['Telefone'] || '').replace(/\D/g, '');
     var waUrl = tel ? 'https://wa.me/55' + tel : '#';
 
-    // Constrói tabela de valores por exame selecionado
-    var linhasValores = '';
     var exameMap = {
       'ECG':    { amb: m['ECG Valor Amb (R$)'],    slaAmb: m['ECG SLA Amb'],    emerg: m['ECG Valor Emerg (R$)'],    slaEmerg: m['ECG SLA Emerg'] },
       'HOLTER': { amb: m['Holter Valor Amb (R$)'], slaAmb: m['Holter SLA Amb'], emerg: m['Holter Valor Emerg (R$)'], slaEmerg: m['Holter SLA Emerg'] },
@@ -520,19 +725,20 @@
       'TE':     { amb: m['TE Valor Amb (R$)'],     slaAmb: m['TE SLA Amb'],     emerg: m['TE Valor Emerg (R$)'],    slaEmerg: m['TE SLA Emerg'] },
     };
 
+    var linhasValores = '';
     exames.forEach(function(ex) {
       var dados = exameMap[ex.toUpperCase()];
       if (!dados) return;
       var exNome = ex === 'TE' ? 'T. Ergométrico' : ex;
       if (dados.amb) {
         linhasValores += '<tr><td>' + escapeHtml(exNome) + ' Amb.</td>' +
-          '<td>' + escapeHtml(dados.amb) + '</td>' +
-          '<td class="sla">' + escapeHtml(dados.slaAmb) + '</td></tr>';
+          '<td>R$ ' + escapeHtml(dados.amb) + '</td>' +
+          '<td class="sla">' + escapeHtml(dados.slaAmb) + 'h</td></tr>';
       }
       if (dados.emerg) {
         linhasValores += '<tr><td>' + escapeHtml(exNome) + ' Emerg.</td>' +
-          '<td>' + escapeHtml(dados.emerg) + '</td>' +
-          '<td class="sla">' + escapeHtml(dados.slaEmerg) + '</td></tr>';
+          '<td>R$ ' + escapeHtml(dados.emerg) + '</td>' +
+          '<td class="sla">' + escapeHtml(dados.slaEmerg) + 'h</td></tr>';
       }
     });
 
@@ -541,12 +747,14 @@
     }).join('');
 
     var fotoHtml = m['Foto URL']
-      ? '<img src="' + escapeHtml(m['Foto URL']) + '" alt="Foto ' + escapeHtml(m['Nome']) + '" onerror="this.style.display=\'none\'">'
+      ? '<img src="' + escapeHtml(m['Foto URL']) + '" alt="" onerror="this.style.display=\'none\'">'
       : escapeHtml(iniciais);
 
-    var diasFormatados = (m['Dias Atendimento'] || '').replace(/,/g, ' ·');
-    var disponibilidade = diasFormatados
-      ? '<div class="disponibilidade"><i class="ti ti-calendar"></i>' + escapeHtml(m['Horário'] || '') + ' · ' + escapeHtml(diasFormatados) + '</div>'
+    var dias = (m['Dias Atendimento'] || '').replace(/,\s*/g, ' · ');
+    var disponibilidade = dias
+      ? '<div class="disponibilidade"><i class="ti ti-calendar"></i><span>' +
+          escapeHtml(m['Horário'] || '') + '<br>' + escapeHtml(dias) +
+        '</span></div>'
       : '';
 
     var card = document.createElement('div');
@@ -576,7 +784,6 @@
     return card;
   }
 
-  // ── Utilitários ──
   function gerarIniciais(nome) {
     return nome.split(' ').filter(function(p) { return p.length > 2; })
       .slice(0, 2).map(function(p) { return p[0]; }).join('').toUpperCase() || '?';
