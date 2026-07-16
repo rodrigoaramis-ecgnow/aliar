@@ -784,6 +784,7 @@
     }
 
     // Stats
+    dados.forEach(function(d) { d.total = Number(d.total) || 0; d.deals = d.deals || []; });
     var totalInd  = dados.reduce(function(s, d) { return s + d.total; }, 0);
     document.getElementById('stat-total').textContent    = totalInd;
     document.getElementById('stat-parceiros').textContent = dados.length;
