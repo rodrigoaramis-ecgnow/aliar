@@ -713,10 +713,18 @@
         emerg: m['TE Valor Emerg (R$)'], slaEmerg: m['TE SLA Emerg'] },
     ];
 
+    function normalizeSla(val) {
+      return String(val || '').replace(/\s*(horas?|hs?)\s*$/i, '').trim();
+    }
+    function formatBRL(val) {
+      var n = parseFloat(String(val || '').replace(',', '.'));
+      return isNaN(n) ? h(val) : n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
     function celMod(valor, sla) {
       if (!valor) return '<td class="cell-mod"><span class="mod-nd">—</span></td>';
-      return '<td class="cell-mod"><div class="mod-valor">R$ ' + h(valor) + '</div>' +
-             (sla ? '<div class="mod-sla">SLA ' + h(sla) + ' hs</div>' : '') + '</td>';
+      var slaNum = normalizeSla(sla);
+      return '<td class="cell-mod"><div class="mod-valor">R$ ' + formatBRL(valor) + '</div>' +
+             (slaNum ? '<div class="mod-sla">SLA ' + slaNum + ' hs</div>' : '') + '</td>';
     }
 
     var examesUpper = exames.map(function(e) { return e.toUpperCase(); });
@@ -731,7 +739,7 @@
 
     var tabelaExames = linhas
       ? '<table class="exames-tabela"><thead><tr>' +
-        '<th>Exame</th><th>Ambulatorial</th><th>Emergência</th>' +
+        '<th>Exame</th><th>Ambulatorial</th><th>Emergencial</th>' +
         '</tr></thead><tbody>' + linhas + '</tbody></table>'
       : '';
 
@@ -842,17 +850,21 @@
   function renderizarDepara(dados) {
     var tbody = document.getElementById('depara-tbody');
     tbody.innerHTML = '';
-    var opcoes = '<option value="">— Selecione —</option>' +
-      todosMedicos.map(function(m) {
-        return '<option value="' + h(m['Nome'] || '') + '">' + h(m['Nome'] || '') + '</option>';
-      }).join('');
+
+    // Datalist com médicos cadastrados (sugestões ao digitar)
+    var dl = document.getElementById('medicos-datalist') || document.createElement('datalist');
+    dl.id = 'medicos-datalist';
+    dl.innerHTML = todosMedicos.map(function(m) {
+      return '<option value="' + h(m['Nome'] || '') + '">';
+    }).join('');
+    if (!document.getElementById('medicos-datalist')) document.body.appendChild(dl);
 
     dados.forEach(function(d) {
-      var opts = opcoes.replace('value="' + h(d.nome_medico) + '"', 'value="' + h(d.nome_medico) + '" selected');
       var tr = document.createElement('tr');
       tr.innerHTML =
         '<td>' + h(d.apelido) + '</td>' +
-        '<td><select class="depara-input" data-apelido="' + h(d.apelido) + '">' + opts + '</select></td>';
+        '<td><input type="text" list="medicos-datalist" class="depara-input" data-apelido="' + h(d.apelido) + '"' +
+        ' value="' + h(d.nome_medico || '') + '" placeholder="Digite o nome do médico…"></td>';
       tbody.appendChild(tr);
     });
   }
