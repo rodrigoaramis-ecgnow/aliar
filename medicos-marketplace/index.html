@@ -345,12 +345,12 @@
     .btn-salvar-depara:hover { background: var(--gold-light); }
     .btn-salvar-depara:disabled { opacity: 0.5; cursor: default; }
     .btn-add-depara {
-      background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm);
-      color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-      padding: 9px 16px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
+      background: var(--gold-glow); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--gold-light); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      padding: 9px 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s;
       display: flex; align-items: center; gap: 7px; margin-right: auto;
     }
-    .btn-add-depara:hover { border-color: var(--gold); color: var(--gold-light); }
+    .btn-add-depara:hover { border-color: var(--gold); background: rgba(141,122,82,0.2); }
 
     /* ── ESTADOS VAZIOS ── */
     .estado-vazio { padding: 60px 28px; text-align: center; display: none; }
@@ -872,7 +872,7 @@
     }).join('');
     if (!document.getElementById('medicos-datalist')) document.body.appendChild(dl);
 
-    dados.forEach(function(d) {
+    dados.filter(function(d) { return d.apelido && d.apelido.trim(); }).forEach(function(d) {
       var tr = document.createElement('tr');
       tr.innerHTML =
         '<td>' + h(d.apelido) + '</td>' +
