@@ -344,6 +344,13 @@
     }
     .btn-salvar-depara:hover { background: var(--gold-light); }
     .btn-salvar-depara:disabled { opacity: 0.5; cursor: default; }
+    .btn-add-depara {
+      background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      padding: 9px 16px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
+      display: flex; align-items: center; gap: 7px; margin-right: auto;
+    }
+    .btn-add-depara:hover { border-color: var(--gold); color: var(--gold-light); }
 
     /* ── ESTADOS VAZIOS ── */
     .estado-vazio { padding: 60px 28px; text-align: center; display: none; }
@@ -577,6 +584,9 @@
             <tbody id="depara-tbody"></tbody>
           </table>
           <div class="depara-footer">
+            <button class="btn-add-depara" onclick="adicionarLinhaDepara()">
+              <i class="ti ti-plus"></i> Adicionar
+            </button>
             <button class="btn-salvar-depara" id="btn-salvar-depara" onclick="salvarDepara()">
               <i class="ti ti-device-floppy"></i> Salvar De-Para
             </button>
@@ -767,7 +777,10 @@
     document.getElementById('ind-vazio').classList.remove('visivel');
     document.getElementById('ind-grid').style.display = 'none';
     document.getElementById('ind-stats').style.display = 'none';
-    document.getElementById('depara-section').style.display = 'none';
+
+    // De-Para sempre visível — carrega estado salvo imediatamente
+    renderizarDepara([]);
+    document.getElementById('depara-section').style.display = '';
 
     fetch(SCRIPT_URL + '?action=indicacoes')
       .then(function(r) { return r.json(); })
@@ -869,13 +882,33 @@
     });
   }
 
+  function adicionarLinhaDepara() {
+    var tbody = document.getElementById('depara-tbody');
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><input type="text" class="depara-input depara-apelido-novo" placeholder="Apelido no CRM (ex: J. Valente)"></td>' +
+      '<td><input type="text" list="medicos-datalist" class="depara-input depara-nome-novo" placeholder="Nome completo do médico"></td>';
+    tbody.appendChild(tr);
+    tr.querySelector('.depara-apelido-novo').focus();
+  }
+
   function salvarDepara() {
     var btn = document.getElementById('btn-salvar-depara');
     btn.disabled = true;
     btn.innerHTML = '<i class="ti ti-loader-2"></i> Salvando…';
 
-    var entradas = Array.from(document.querySelectorAll('.depara-input')).map(function(inp) {
+    // Linhas vindas do CRM (apelido em data-apelido)
+    var entradas = Array.from(document.querySelectorAll('.depara-input[data-apelido]')).map(function(inp) {
       return { apelido: inp.dataset.apelido, nome_medico: inp.value.trim() };
+    });
+    // Linhas adicionadas manualmente (dois inputs por linha)
+    document.querySelectorAll('#depara-tbody tr').forEach(function(tr) {
+      var apelidoInp = tr.querySelector('.depara-apelido-novo');
+      var nomeInp    = tr.querySelector('.depara-nome-novo');
+      if (apelidoInp && nomeInp) {
+        var ap = apelidoInp.value.trim();
+        if (ap) entradas.push({ apelido: ap, nome_medico: nomeInp.value.trim() });
+      }
     });
 
     fetch(SCRIPT_URL + '?action=salvar-depara', {
