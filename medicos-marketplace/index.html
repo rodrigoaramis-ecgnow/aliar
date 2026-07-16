@@ -673,7 +673,7 @@
       var matchNome  = !nome || (m['Nome'] || '').toLowerCase().includes(nome);
       var matchFds   = !fds  || /s[aá]bado|domingo/i.test(m['Dias Atendimento'] || '');
       var matchNot   = !noturno || getEndHour(m['Horário'] || '') > 18;
-      var temRqe   = !!(m['RQE'] || '').trim();
+      var temRqe   = !!String(m['RQE'] || '').trim();
       var matchRqe = !rqeVal || (rqeVal === 'sim' && temRqe) || (rqeVal === 'nao' && !temRqe);
       return matchEstado && matchExame && matchNome && matchFds && matchNot && matchRqe;
     });
