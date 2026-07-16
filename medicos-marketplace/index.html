@@ -478,14 +478,11 @@
           <!-- RQE -->
           <div class="filtro-grupo">
             <label>RQE</label>
-            <div class="chips-row">
-              <label class="chip-toggle" id="chip-rqe-sim" onclick="toggleChip('chip-rqe-sim','filtro-rqe-sim')">
-                <input type="checkbox" id="filtro-rqe-sim" style="display:none" onchange="aplicarFiltros()"> Sim
-              </label>
-              <label class="chip-toggle" id="chip-rqe-nao" onclick="toggleChip('chip-rqe-nao','filtro-rqe-nao')">
-                <input type="checkbox" id="filtro-rqe-nao" style="display:none" onchange="aplicarFiltros()"> Não
-              </label>
-            </div>
+            <select id="filtro-rqe" onchange="aplicarFiltros()" style="background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-family:'Inter',sans-serif;font-size:13px;padding:8px 10px;outline:none;min-width:150px;cursor:pointer;">
+              <option value="">Todos</option>
+              <option value="sim">Com RQE</option>
+              <option value="nao">Sem RQE</option>
+            </select>
           </div>
 
           <!-- Nome -->
@@ -662,8 +659,7 @@
     var nome      = document.getElementById('filtro-nome').value.trim().toLowerCase();
     var fds       = document.getElementById('filtro-fds').checked;
     var noturno   = document.getElementById('filtro-noturno').checked;
-    var rqeSim    = document.getElementById('filtro-rqe-sim').checked;
-    var rqeNao    = document.getElementById('filtro-rqe-nao').checked;
+    var rqeVal    = document.getElementById('filtro-rqe').value;
 
     var resultado = todosMedicos.filter(function(m) {
       var matchEstado = estados.length === 0 ||
@@ -673,8 +669,8 @@
       var matchNome  = !nome || (m['Nome'] || '').toLowerCase().includes(nome);
       var matchFds   = !fds  || /s[aá]bado|domingo/i.test(m['Dias Atendimento'] || '');
       var matchNot   = !noturno || getEndHour(m['Horário'] || '') > 18;
-      var temRqe     = !!(m['RQE'] || '').trim();
-      var matchRqe   = (!rqeSim && !rqeNao) || (rqeSim && temRqe) || (rqeNao && !temRqe);
+      var temRqe   = !!(m['RQE'] || '').trim();
+      var matchRqe = !rqeVal || (rqeVal === 'sim' && temRqe) || (rqeVal === 'nao' && !temRqe);
       return matchEstado && matchExame && matchNome && matchFds && matchNot && matchRqe;
     });
 
@@ -699,12 +695,9 @@
     document.getElementById('filtro-nome').value = '';
     document.getElementById('filtro-fds').checked = false;
     document.getElementById('filtro-noturno').checked = false;
-    document.getElementById('filtro-rqe-sim').checked = false;
-    document.getElementById('filtro-rqe-nao').checked = false;
+    document.getElementById('filtro-rqe').value = '';
     document.getElementById('chip-fds').classList.remove('ativo');
     document.getElementById('chip-noturno').classList.remove('ativo');
-    document.getElementById('chip-rqe-sim').classList.remove('ativo');
-    document.getElementById('chip-rqe-nao').classList.remove('ativo');
     aplicarFiltros();
   }
 
