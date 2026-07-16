@@ -524,7 +524,7 @@
       <div class="estado-vazio" id="estado-erro">
         <div class="icone"><i class="ti ti-wifi-off"></i></div>
         <h3>Erro ao carregar</h3>
-        <p>Não foi possível buscar os dados. Verifique a conexão e recarregue.</p>
+        <p id="estado-erro-msg">Não foi possível buscar os dados. Verifique a conexão e recarregue.</p>
       </div>
       <div class="estado-vazio" id="estado-vazio">
         <div class="icone"><i class="ti ti-search-off"></i></div>
@@ -650,7 +650,10 @@
         aplicarFiltros();
         mostrarEstadoMed('');
       })
-      .catch(function() { mostrarEstadoMed('erro'); });
+      .catch(function(err) {
+        document.getElementById('estado-erro-msg').textContent = err && err.message ? err.message : 'Erro desconhecido — abra o console do navegador (F12) para detalhes.';
+        mostrarEstadoMed('erro');
+      });
   }
 
   function aplicarFiltros() {
