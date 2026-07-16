@@ -242,15 +242,22 @@
     .medico-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
     .medico-esp { font-size: 11px; color: var(--gold-light); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .card-body { padding: 14px 18px; flex: 1; }
-    .exames-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
-    .badge-exame { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; background: var(--gold-glow); border: 1px solid var(--border); color: var(--gold-light); text-transform: uppercase; letter-spacing: 0.5px; }
-    .valores-tabela { width: 100%; font-size: 11px; border-collapse: collapse; }
-    .valores-tabela thead th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; padding: 0 0 5px; text-align: left; }
-    .valores-tabela thead th:not(:first-child) { text-align: right; }
-    .valores-tabela tbody tr { border-top: 1px solid rgba(141,122,82,0.12); }
-    .valores-tabela tbody td { padding: 5px 0; color: var(--text-label); }
-    .valores-tabela tbody td:not(:first-child) { text-align: right; color: var(--success); font-weight: 500; }
-    .valores-tabela tbody td.sla { color: var(--text-muted); font-size: 10px; }
+    .exames-tabela { width: 100%; font-size: 11px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .exames-tabela thead th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 9px; letter-spacing: 0.8px; padding: 0 6px 7px 0; text-align: left; border-bottom: 1px solid rgba(141,122,82,0.18); }
+    .exames-tabela thead th:not(:first-child) { text-align: center; }
+    .exames-tabela tbody tr { border-bottom: 1px solid rgba(141,122,82,0.08); }
+    .exames-tabela tbody tr:last-child { border-bottom: none; }
+    .exames-tabela tbody td { padding: 7px 6px 7px 0; vertical-align: middle; }
+    .exame-linha { display: flex; align-items: center; gap: 6px; color: var(--text-label); font-weight: 500; }
+    .exame-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .dot-ecg    { background: #60a5fa; }
+    .dot-holter { background: #a78bfa; }
+    .dot-mapa   { background: #34d399; }
+    .dot-te     { background: #fb923c; }
+    .cell-mod { text-align: center; }
+    .mod-valor { color: var(--success); font-weight: 600; font-size: 11px; }
+    .mod-sla   { color: var(--text-muted); font-size: 10px; margin-top: 1px; }
+    .mod-nd    { color: var(--text-muted); font-size: 12px; }
     .disponibilidade { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(141,122,82,0.15); display: flex; align-items: flex-start; gap: 7px; font-size: 11px; color: var(--text-muted); }
     .disponibilidade i { color: var(--gold); font-size: 13px; margin-top: 2px; flex-shrink: 0; }
     .card-footer { padding: 12px 18px; border-top: 1px solid var(--border); }
@@ -688,22 +695,46 @@
 
   function criarCard(m) {
     var exames = (m['Exames'] || '').split(',').map(function(e) { return e.trim(); }).filter(Boolean);
-    var tel    = (m['Telefone'] || '').replace(/\D/g, '');
-    var waUrl  = tel ? 'https://wa.me/55' + tel : '#';
-    var exameMap = {
-      'ECG':    { amb: m['ECG Valor Amb (R$)'],    slaAmb: m['ECG SLA Amb'],    emerg: m['ECG Valor Emerg (R$)'],    slaEmerg: m['ECG SLA Emerg'] },
-      'HOLTER': { amb: m['Holter Valor Amb (R$)'], slaAmb: m['Holter SLA Amb'], emerg: m['Holter Valor Emerg (R$)'], slaEmerg: m['Holter SLA Emerg'] },
-      'MAPA':   { amb: m['MAPA Valor Amb (R$)'],   slaAmb: m['MAPA SLA Amb'],   emerg: m['MAPA Valor Emerg (R$)'],  slaEmerg: m['MAPA SLA Emerg'] },
-      'TE':     { amb: m['TE Valor Amb (R$)'],     slaAmb: m['TE SLA Amb'],     emerg: m['TE Valor Emerg (R$)'],    slaEmerg: m['TE SLA Emerg'] },
-    };
-    var linhasValores = '';
-    exames.forEach(function(ex) {
-      var d = exameMap[ex.toUpperCase()]; if (!d) return;
-      var n = ex === 'TE' ? 'T. Ergométrico' : ex;
-      if (d.amb)   linhasValores += '<tr><td>' + h(n) + ' Amb.</td><td>R$ ' + h(d.amb) + '</td><td class="sla">' + h(d.slaAmb) + 'h</td></tr>';
-      if (d.emerg) linhasValores += '<tr><td>' + h(n) + ' Emerg.</td><td>R$ ' + h(d.emerg) + '</td><td class="sla">' + h(d.slaEmerg) + 'h</td></tr>';
-    });
-    var badges = exames.map(function(e) { return '<span class="badge-exame">' + h(e) + '</span>'; }).join('');
+    var tel   = (m['Telefone'] || '').replace(/\D/g, '');
+    var waUrl = tel ? 'https://wa.me/55' + tel : '#';
+
+    var EXAME_CFG = [
+      { key: 'ECG',    label: 'ECG',     dot: 'dot-ecg',
+        amb: m['ECG Valor Amb (R$)'],    slaAmb: m['ECG SLA Amb'],
+        emerg: m['ECG Valor Emerg (R$)'],slaEmerg: m['ECG SLA Emerg'] },
+      { key: 'HOLTER', label: 'Holter',  dot: 'dot-holter',
+        amb: m['Holter Valor Amb (R$)'], slaAmb: m['Holter SLA Amb'],
+        emerg: m['Holter Valor Emerg (R$)'], slaEmerg: m['Holter SLA Emerg'] },
+      { key: 'MAPA',   label: 'MAPA',    dot: 'dot-mapa',
+        amb: m['MAPA Valor Amb (R$)'],   slaAmb: m['MAPA SLA Amb'],
+        emerg: m['MAPA Valor Emerg (R$)'],slaEmerg: m['MAPA SLA Emerg'] },
+      { key: 'TE',     label: 'T. Ergo', dot: 'dot-te',
+        amb: m['TE Valor Amb (R$)'],     slaAmb: m['TE SLA Amb'],
+        emerg: m['TE Valor Emerg (R$)'], slaEmerg: m['TE SLA Emerg'] },
+    ];
+
+    function celMod(valor, sla) {
+      if (!valor) return '<td class="cell-mod"><span class="mod-nd">—</span></td>';
+      return '<td class="cell-mod"><div class="mod-valor">R$ ' + h(valor) + '</div>' +
+             (sla ? '<div class="mod-sla">SLA ' + h(sla) + ' hs</div>' : '') + '</td>';
+    }
+
+    var examesUpper = exames.map(function(e) { return e.toUpperCase(); });
+    var linhas = EXAME_CFG
+      .filter(function(c) { return examesUpper.indexOf(c.key) !== -1; })
+      .map(function(c) {
+        return '<tr>' +
+          '<td><div class="exame-linha"><span class="exame-dot ' + c.dot + '"></span>' + c.label + '</div></td>' +
+          celMod(c.amb, c.slaAmb) + celMod(c.emerg, c.slaEmerg) +
+          '</tr>';
+      }).join('');
+
+    var tabelaExames = linhas
+      ? '<table class="exames-tabela"><thead><tr>' +
+        '<th>Exame</th><th>Ambulatorial</th><th>Emergência</th>' +
+        '</tr></thead><tbody>' + linhas + '</tbody></table>'
+      : '';
+
     var fotoSrc  = m['Foto URL'] ? driveImgUrl(m['Foto URL']) : '';
     var fotoHtml = fotoSrc ? '<img src="' + fotoSrc + '" alt="" onclick="abrirLightbox(this)" onerror="this.style.display=\'none\'">' : h(gerarIniciais(m['Nome'] || ''));
     var dias = (m['Dias Atendimento'] || '').replace(/,\s*/g, ' · ');
@@ -715,9 +746,7 @@
       '<div class="medico-info"><div class="medico-nome">' + h(m['Nome'] || '—') + '</div>' +
       '<div class="medico-meta">CRM ' + h(m['CRM'] || '') + ' · ' + h(m['Estado'] || '') + '</div>' +
       '<div class="medico-esp">' + h(m['Especialização'] || '') + '</div></div></div>' +
-      '<div class="card-body"><div class="exames-row">' + badges + '</div>' +
-      (linhasValores ? '<table class="valores-tabela"><thead><tr><th>Exame</th><th>Valor</th><th>SLA</th></tr></thead><tbody>' + linhasValores + '</tbody></table>' : '') +
-      disp + '</div>' +
+      '<div class="card-body">' + tabelaExames + disp + '</div>' +
       '<div class="card-footer"><a class="btn-whatsapp" href="' + h(waUrl) + '" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> WhatsApp</a></div>';
     return card;
   }
