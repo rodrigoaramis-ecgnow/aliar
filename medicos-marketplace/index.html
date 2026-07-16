@@ -659,7 +659,8 @@
     var nome      = document.getElementById('filtro-nome').value.trim().toLowerCase();
     var fds       = document.getElementById('filtro-fds').checked;
     var noturno   = document.getElementById('filtro-noturno').checked;
-    var rqeVal    = document.getElementById('filtro-rqe').value;
+    var rqeEl     = document.getElementById('filtro-rqe');
+    var rqeVal    = rqeEl ? rqeEl.value : '';
 
     var resultado = todosMedicos.filter(function(m) {
       var matchEstado = estados.length === 0 ||
