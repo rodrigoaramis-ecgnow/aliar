@@ -786,57 +786,57 @@
   }
 
   function renderizarIndicacoes(dados) {
+    dados.forEach(function(d) { d.total = Number(d.total) || 0; d.deals = d.deals || []; });
+
     if (!dados.length) {
       document.getElementById('ind-vazio').classList.add('visivel');
-      return;
+    } else {
+      // Stats
+      var totalInd = dados.reduce(function(s, d) { return s + d.total; }, 0);
+      document.getElementById('stat-total').textContent     = totalInd;
+      document.getElementById('stat-parceiros').textContent = dados.length;
+      document.getElementById('stat-media').textContent     = (totalInd / dados.length).toFixed(1);
+      document.getElementById('ind-stats').style.display   = '';
+
+      // Cards
+      var grid = document.getElementById('ind-grid');
+      grid.innerHTML = ''; grid.style.display = 'grid';
+
+      dados.forEach(function(d, idx) {
+        var rankClass = idx === 0 ? 'top1' : idx === 1 ? 'top2' : idx === 2 ? 'top3' : '';
+        var nomeHtml  = d.nome_medico
+          ? '<div class="ind-nome">' + h(d.nome_medico) + '</div>'
+          : '<div class="ind-nome nao-mapeado">Não mapeado</div>';
+
+        var dealsHtml = d.deals.map(function(deal) {
+          var data  = deal.fechado_em ? new Date(deal.fechado_em).toLocaleDateString('pt-BR') : '—';
+          var valor = deal.valor ? 'R$ ' + Number(deal.valor).toLocaleString('pt-BR') : '';
+          return '<div class="ind-deal-row">' +
+            '<span class="ind-deal-nome">' + h(deal.nome) + '</span>' +
+            '<span class="ind-deal-meta">' +
+              (valor ? '<span class="ind-deal-valor">' + valor + '</span>' : '') +
+              '<span class="ind-deal-data">' + data + '</span>' +
+            '</span></div>';
+        }).join('');
+
+        var card = document.createElement('div');
+        card.className = 'ind-card';
+        card.innerHTML =
+          '<div class="ind-card-header" onclick="toggleIndCard(this)">' +
+            '<div class="ind-rank ' + rankClass + '">' + (idx + 1) + '</div>' +
+            '<div class="ind-info">' +
+              '<div class="ind-apelido">' + h(d.apelido) + '</div>' +
+              nomeHtml +
+            '</div>' +
+            '<div class="ind-total"><div class="num">' + d.total + '</div><div class="lbl">indicaç' + (d.total === 1 ? 'ão' : 'ões') + '</div></div>' +
+            '<i class="ti ti-chevron-down ind-chevron"></i>' +
+          '</div>' +
+          '<div class="ind-deals"><div class="ind-deals-list">' + dealsHtml + '</div></div>';
+        grid.appendChild(card);
+      });
     }
 
-    // Stats
-    dados.forEach(function(d) { d.total = Number(d.total) || 0; d.deals = d.deals || []; });
-    var totalInd  = dados.reduce(function(s, d) { return s + d.total; }, 0);
-    document.getElementById('stat-total').textContent    = totalInd;
-    document.getElementById('stat-parceiros').textContent = dados.length;
-    document.getElementById('stat-media').textContent    = (totalInd / dados.length).toFixed(1);
-    document.getElementById('ind-stats').style.display  = '';
-
-    // Cards
-    var grid = document.getElementById('ind-grid');
-    grid.innerHTML = ''; grid.style.display = 'grid';
-
-    dados.forEach(function(d, idx) {
-      var rankClass = idx === 0 ? 'top1' : idx === 1 ? 'top2' : idx === 2 ? 'top3' : '';
-      var nomeHtml  = d.nome_medico
-        ? '<div class="ind-nome">' + h(d.nome_medico) + '</div>'
-        : '<div class="ind-nome nao-mapeado">Não mapeado</div>';
-
-      var dealsHtml = d.deals.map(function(deal) {
-        var data  = deal.fechado_em ? new Date(deal.fechado_em).toLocaleDateString('pt-BR') : '—';
-        var valor = deal.valor ? 'R$ ' + Number(deal.valor).toLocaleString('pt-BR') : '';
-        return '<div class="ind-deal-row">' +
-          '<span class="ind-deal-nome">' + h(deal.nome) + '</span>' +
-          '<span class="ind-deal-meta">' +
-            (valor ? '<span class="ind-deal-valor">' + valor + '</span>' : '') +
-            '<span class="ind-deal-data">' + data + '</span>' +
-          '</span></div>';
-      }).join('');
-
-      var card = document.createElement('div');
-      card.className = 'ind-card';
-      card.innerHTML =
-        '<div class="ind-card-header" onclick="toggleIndCard(this)">' +
-          '<div class="ind-rank ' + rankClass + '">' + (idx + 1) + '</div>' +
-          '<div class="ind-info">' +
-            '<div class="ind-apelido">' + h(d.apelido) + '</div>' +
-            nomeHtml +
-          '</div>' +
-          '<div class="ind-total"><div class="num">' + d.total + '</div><div class="lbl">indicaç' + (d.total === 1 ? 'ão' : 'ões') + '</div></div>' +
-          '<i class="ti ti-chevron-down ind-chevron"></i>' +
-        '</div>' +
-        '<div class="ind-deals"><div class="ind-deals-list">' + dealsHtml + '</div></div>';
-      grid.appendChild(card);
-    });
-
-    // De-Para editor
+    // De-Para sempre visível na aba Indicações
     renderizarDepara(dados);
     document.getElementById('depara-section').style.display = '';
   }
