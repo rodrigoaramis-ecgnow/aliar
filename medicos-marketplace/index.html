@@ -475,6 +475,19 @@
             </div>
           </div>
 
+          <!-- RQE -->
+          <div class="filtro-grupo">
+            <label>RQE</label>
+            <div class="chips-row">
+              <label class="chip-toggle" id="chip-rqe-sim" onclick="toggleChip('chip-rqe-sim','filtro-rqe-sim')">
+                <input type="checkbox" id="filtro-rqe-sim" style="display:none" onchange="aplicarFiltros()"> Sim
+              </label>
+              <label class="chip-toggle" id="chip-rqe-nao" onclick="toggleChip('chip-rqe-nao','filtro-rqe-nao')">
+                <input type="checkbox" id="filtro-rqe-nao" style="display:none" onchange="aplicarFiltros()"> Não
+              </label>
+            </div>
+          </div>
+
           <!-- Nome -->
           <div class="filtro-grupo">
             <label>Buscar por nome</label>
@@ -644,11 +657,13 @@
   }
 
   function aplicarFiltros() {
-    var estados = getSelectedMS('ms-estado');
-    var exames  = getSelectedMS('ms-exame');
-    var nome    = document.getElementById('filtro-nome').value.trim().toLowerCase();
-    var fds     = document.getElementById('filtro-fds').checked;
-    var noturno = document.getElementById('filtro-noturno').checked;
+    var estados   = getSelectedMS('ms-estado');
+    var exames    = getSelectedMS('ms-exame');
+    var nome      = document.getElementById('filtro-nome').value.trim().toLowerCase();
+    var fds       = document.getElementById('filtro-fds').checked;
+    var noturno   = document.getElementById('filtro-noturno').checked;
+    var rqeSim    = document.getElementById('filtro-rqe-sim').checked;
+    var rqeNao    = document.getElementById('filtro-rqe-nao').checked;
 
     var resultado = todosMedicos.filter(function(m) {
       var matchEstado = estados.length === 0 ||
@@ -658,7 +673,9 @@
       var matchNome  = !nome || (m['Nome'] || '').toLowerCase().includes(nome);
       var matchFds   = !fds  || /s[aá]bado|domingo/i.test(m['Dias Atendimento'] || '');
       var matchNot   = !noturno || getEndHour(m['Horário'] || '') > 18;
-      return matchEstado && matchExame && matchNome && matchFds && matchNot;
+      var temRqe     = !!(m['RQE'] || '').trim();
+      var matchRqe   = (!rqeSim && !rqeNao) || (rqeSim && temRqe) || (rqeNao && !temRqe);
+      return matchEstado && matchExame && matchNome && matchFds && matchNot && matchRqe;
     });
 
     renderizarCards(resultado);
@@ -682,8 +699,12 @@
     document.getElementById('filtro-nome').value = '';
     document.getElementById('filtro-fds').checked = false;
     document.getElementById('filtro-noturno').checked = false;
+    document.getElementById('filtro-rqe-sim').checked = false;
+    document.getElementById('filtro-rqe-nao').checked = false;
     document.getElementById('chip-fds').classList.remove('ativo');
     document.getElementById('chip-noturno').classList.remove('ativo');
+    document.getElementById('chip-rqe-sim').classList.remove('ativo');
+    document.getElementById('chip-rqe-nao').classList.remove('ativo');
     aplicarFiltros();
   }
 
@@ -759,7 +780,7 @@
     card.innerHTML =
       '<div class="card-top"><div class="medico-avatar">' + fotoHtml + '</div>' +
       '<div class="medico-info"><div class="medico-nome">' + h(m['Nome'] || '—') + '</div>' +
-      '<div class="medico-meta">CRM ' + h(m['CRM'] || '') + ' · ' + h(m['Estado'] || '') + '</div>' +
+      '<div class="medico-meta">CRM ' + h(m['CRM'] || '') + (m['RQE'] ? ' · RQE ' + h(m['RQE']) : '') + ' · ' + h(m['Estado'] || '') + '</div>' +
       '<div class="medico-esp">' + h(m['Especialização'] || '') + '</div></div></div>' +
       '<div class="card-body">' + tabelaExames + disp + '</div>' +
       '<div class="card-footer"><a class="btn-whatsapp" href="' + h(waUrl) + '" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> WhatsApp</a></div>';
