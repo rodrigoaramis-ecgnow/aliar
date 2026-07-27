@@ -776,9 +776,9 @@
     card.className = 'card-medico';
     card.innerHTML =
       '<div class="card-top"><div class="medico-avatar">' + fotoHtml + '</div>' +
-      '<div class="medico-info"><div class="medico-nome">' + h(m['Nome'] || '—') + '</div>' +
+      '<div class="medico-info"><div class="medico-nome">' + h(titleCase(m['Nome'] || '—')) + '</div>' +
       '<div class="medico-meta">CRM ' + h(m['CRM'] || '') + (m['RQE'] ? ' · RQE ' + h(m['RQE']) : '') + ' · ' + h(m['Estado'] || '') + '</div>' +
-      '<div class="medico-esp">' + h(m['Especialização'] || '') + '</div></div></div>' +
+      '<div class="medico-esp">' + h(titleCase(m['Especialização'] || '')) + '</div></div></div>' +
       '<div class="card-body">' + tabelaExames + disp + '</div>' +
       '<div class="card-footer"><a class="btn-whatsapp" href="' + h(waUrl) + '" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> WhatsApp</a></div>';
     return card;
@@ -989,6 +989,14 @@ function salvarDepara() {
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') fecharLightbox();
   });
+
+  // Palavras que ficam em minúsculo no meio do nome (preposições/artigos)
+  var MINUSCULAS = { 'de':1,'da':1,'do':1,'das':1,'dos':1,'e':1,'a':1,'o':1,'em':1,'no':1,'na':1 };
+  function titleCase(str) {
+    return String(str || '').toLowerCase().replace(/\S+/g, function(w, i) {
+      return (i > 0 && MINUSCULAS[w]) ? w : w.charAt(0).toUpperCase() + w.slice(1);
+    });
+  }
 
   function gerarIniciais(nome) {
     return nome.split(' ').filter(function(p) { return p.length > 2; })
