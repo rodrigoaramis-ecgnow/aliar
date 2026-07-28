@@ -463,6 +463,12 @@
             <i class="ti ti-building" style="margin-right:6px;"></i>
             <span id="cnpj-nome">—</span>
           </div>
+          <!-- Fallback: entrada manual quando API não retorna -->
+          <div id="razao-manual" style="display:none;margin-top:8px;">
+            <input type="text" id="razao_social_input" placeholder="Digite a Razão Social manualmente…"
+              style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:13px;padding:9px 12px;outline:none;"
+              oninput="document.getElementById('razao_social').value=this.value">
+          </div>
           <!-- Campo oculto enviado com o formulário -->
           <input type="hidden" id="razao_social" name="razao_social">
         </div>
@@ -792,8 +798,10 @@
       .catch(function() {
         document.getElementById('cnpj-resultado').style.display = 'none';
         document.getElementById('razao_social').value = '';
-        status.textContent = 'CNPJ não encontrado na Receita Federal.';
-        status.style.color = 'var(--danger)';
+        document.getElementById('razao-manual').style.display = 'block';
+        document.getElementById('razao_social_input').focus();
+        status.textContent = 'CNPJ não encontrado automaticamente — preencha a Razão Social abaixo.';
+        status.style.color = 'var(--amber, #f59e0b)';
         status.style.display = 'block';
       });
   }
