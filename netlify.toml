@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/"
+  to   = "/medicos-marketplace/index.html"
+  status = 200
