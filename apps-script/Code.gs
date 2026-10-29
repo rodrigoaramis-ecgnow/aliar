@@ -95,20 +95,41 @@ function cadastrarMedico(e) {
 // ── INDICAÇÕES — GET ─────────────────────────────────────────
 
 function getIndicacoes() {
-  var deals  = buscarDealsGanhos();
-  var depara = lerDepara();
-  var grupos = {};
+  var deals    = buscarDealsGanhos();
+  var depara   = lerDepara();
+  var grupos   = {};
+  var pendentes = []; // deals sem "Cliente da Instituição?" preenchido
 
   deals.forEach(function(deal) {
-    var apelido = '';
+    var apelido           = '';
+    var clienteInstituicao = null;
+
     (deal.deal_custom_fields || []).forEach(function(cf) {
-      if (cf.custom_field &&
-          cf.custom_field.label === CONFIG.RD_CAMPO_INDICACAO &&
-          cf.value) {
+      if (!cf.custom_field) return;
+      if (cf.custom_field.label === CONFIG.RD_CAMPO_INDICACAO && cf.value) {
         apelido = String(cf.value).trim();
       }
+      if (cf.custom_field.label === 'Cliente da Instituição?') {
+        var v = cf.value;
+        if (v !== null && v !== undefined && String(v).trim() !== '') {
+          clienteInstituicao = String(v).trim();
+        }
+      }
     });
+
     if (!apelido) return;
+
+    // "Sim" = cliente já era do médico → não contabiliza
+    if (clienteInstituicao === 'Sim') return;
+
+    // Sem preenchimento → contabiliza mas sinaliza para o usuário preencher no CRM
+    if (!clienteInstituicao) {
+      pendentes.push({
+        nome:       sanitizar(deal.name || ''),
+        apelido:    apelido,
+        fechado_em: deal.closed_at || ''
+      });
+    }
 
     if (!grupos[apelido]) {
       grupos[apelido] = {
@@ -130,7 +151,15 @@ function getIndicacoes() {
     return b.total - a.total;
   });
 
-  return resposta(true, 'OK', resultado);
+  // data = array de indicações (mantém compatibilidade); pendentes = campo extra
+  var payload = JSON.stringify({
+    success:   true,
+    message:   'OK',
+    data:      resultado,
+    pendentes: pendentes
+  });
+  return ContentService.createTextOutput(payload)
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function buscarDealsGanhos() {

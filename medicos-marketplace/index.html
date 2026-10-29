@@ -317,6 +317,34 @@
     .ind-deal-data { color: var(--text-muted); font-size: 11px; }
     .ind-deal-valor { color: var(--success); font-weight: 600; }
 
+    /* Alerta pendentes */
+    .pendentes-section { padding: 0 28px 40px; }
+    .pendentes-alert {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.35);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .pendentes-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(245,158,11,0.2);
+    }
+    .pendentes-header i { color: #f59e0b; font-size: 18px; }
+    .pendentes-header strong { color: #f59e0b; font-size: 14px; }
+    .pendentes-header span { color: var(--text-muted); font-size: 13px; margin-left: auto; }
+    .pendentes-list { padding: 6px 0; }
+    .pendentes-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 9px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 13px;
+    }
+    .pendentes-row:last-child { border-bottom: none; }
+    .pendentes-deal { flex: 1; color: var(--text-label); }
+    .pendentes-apelido { color: var(--gold-light); font-weight: 600; font-size: 12px; min-width: 100px; }
+    .pendentes-data { color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+
     /* De-Para editor */
     .depara-section { padding: 40px 28px 60px; }
     .depara-section h2 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
@@ -369,7 +397,7 @@
       .filtros-card { flex-direction: column; }
       .filtro-grupo, .multiselect { min-width: 100%; }
       .cards-grid, .ind-grid { grid-template-columns: 1fr; padding: 0 16px 40px; }
-      .hero, .filtros, .resultado-header, .ind-header, .stats-row, .depara-section { padding-left: 16px; padding-right: 16px; }
+      .hero, .filtros, .resultado-header, .ind-header, .stats-row, .depara-section, .pendentes-section { padding-left: 16px; padding-right: 16px; }
       .stats-row { padding-left: 16px; padding-right: 16px; }
     }
   </style>
@@ -601,6 +629,18 @@
         </div>
       </div>
 
+      <!-- Alerta: deals sem "Cliente da Instituição?" preenchido -->
+      <div class="pendentes-section" id="pendentes-section" style="display:none">
+        <div class="pendentes-alert">
+          <div class="pendentes-header">
+            <i class="ti ti-alert-triangle"></i>
+            <strong id="pendentes-titulo">Deals sem preenchimento</strong>
+            <span>Acesse o CRM e preencha <em>Cliente da Instituição?</em> em cada um</span>
+          </div>
+          <div class="pendentes-list" id="pendentes-list"></div>
+        </div>
+      </div>
+
     </div><!-- /secao-indicacoes -->
 
     <footer>
@@ -802,9 +842,11 @@
       .then(function(resp) {
         document.getElementById('ind-carregando').classList.remove('visivel');
         if (!resp.success) throw new Error(resp.message);
-        var dados = resp.data || [];
+        var indicacoes = resp.data      || [];
+        var pendentes  = resp.pendentes || [];
         indicacoesCarregadas = true;
-        renderizarIndicacoes(dados);
+        renderizarIndicacoes(indicacoes);
+        renderizarPendentes(pendentes);
       })
       .catch(function(err) {
         document.getElementById('ind-carregando').classList.remove('visivel');
@@ -871,6 +913,29 @@
 
   function toggleIndCard(header) {
     header.parentElement.classList.toggle('aberto');
+  }
+
+  function renderizarPendentes(pendentes) {
+    var section = document.getElementById('pendentes-section');
+    var list    = document.getElementById('pendentes-list');
+    var titulo  = document.getElementById('pendentes-titulo');
+
+    if (!pendentes || !pendentes.length) {
+      section.style.display = 'none';
+      return;
+    }
+
+    titulo.textContent = pendentes.length + ' deal' + (pendentes.length > 1 ? 's' : '') + ' sem preenchimento';
+    list.innerHTML = pendentes.map(function(p) {
+      var data = p.fechado_em ? new Date(p.fechado_em).toLocaleDateString('pt-BR') : '—';
+      return '<div class="pendentes-row">' +
+        '<span class="pendentes-apelido">' + h(p.apelido) + '</span>' +
+        '<span class="pendentes-deal">' + h(p.nome) + '</span>' +
+        '<span class="pendentes-data">' + data + '</span>' +
+      '</div>';
+    }).join('');
+
+    section.style.display = '';
   }
 
   // ════════════════ DE-PARA ════════════════
