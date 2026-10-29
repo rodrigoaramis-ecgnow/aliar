@@ -842,8 +842,18 @@
       .then(function(resp) {
         document.getElementById('ind-carregando').classList.remove('visivel');
         if (!resp.success) throw new Error(resp.message);
-        var indicacoes = resp.data      || [];
-        var pendentes  = resp.pendentes || [];
+        var raw = resp.data;
+        var indicacoes, pendentes;
+        if (Array.isArray(raw)) {
+          indicacoes = raw;
+          pendentes  = resp.pendentes || [];
+        } else if (raw && Array.isArray(raw.indicacoes)) {
+          indicacoes = raw.indicacoes;
+          pendentes  = raw.pendentes || [];
+        } else {
+          indicacoes = [];
+          pendentes  = [];
+        }
         indicacoesCarregadas = true;
         renderizarIndicacoes(indicacoes);
         renderizarPendentes(pendentes);
