@@ -111,7 +111,8 @@ function criarDocEntrevista(d) {
 
 function criarDocCadastro(d) {
   const emp     = d.empresa || {};
-  const empresa = tc(emp.nome_fantasia || emp.razao_social || d.cnpj || 'Empresa');
+  const end     = d.endereco || {};
+  const empresa = tc(d.nome_fantasia || emp.razao_social || d.cnpj || 'Empresa');
   const titulo  = 'Cadastro ALIAR — ' + empresa + ' — ' + new Date().toLocaleDateString('pt-BR');
   const doc  = DocumentApp.create(titulo);
   const body = doc.getBody();
@@ -122,16 +123,17 @@ function criarDocCadastro(d) {
 
   sec(body, 'DADOS DA EMPRESA');
 
-  // Razão Social | Nome Fantasia | Cidade/UF — na mesma linha
-  const cidadeUF   = [tc(emp.cidade), (emp.estado || '').toUpperCase()].filter(Boolean).join('/');
-  const razaoLinha = [tc(emp.razao_social), tc(emp.nome_fantasia), cidadeUF].filter(Boolean).join(' | ');
+  // Razão Social | Nome Fantasia — na mesma linha
+  const cidadeUF   = [tc(end.cidade), (end.estado || '').toUpperCase()].filter(Boolean).join('/');
+  const razaoLinha = [tc(emp.razao_social), tc(d.nome_fantasia)].filter(Boolean).join(' | ');
   linha(body, 'Razão Social',      razaoLinha);
 
   linha(body, 'CNPJ',              emp.cnpj);
+  linha(body, 'Cidade/Estado',     cidadeUF);
   linha(body, 'Tipo de Serviço',   tc(emp.tipo_servico));
   linha(body, 'Nº Funcionários',   emp.num_funcionarios);
   linha(body, 'Vencimento Boleto', 'Dia ' + (emp.vencimento_boleto || '—'));
-  linha(body, 'Endereço', [tc(emp.logradouro), emp.numero, tc(emp.complemento), tc(emp.bairro), tc(emp.cidade), (emp.estado || '').toUpperCase()].filter(Boolean).join(', '));
+  linha(body, 'Endereço', [tc(end.logradouro), end.numero, tc(end.complemento), tc(end.bairro), tc(end.cidade), (end.estado || '').toUpperCase()].filter(Boolean).join(', '));
 
   sec(body, 'REPRESENTANTE(S) LEGAL');
   (d.representantes_legais || []).forEach(function(r, i) {
