@@ -89,11 +89,11 @@ Títulos de cards (`section-title`, `sec-header`) e bordas de selects usam tom o
 
 ## centrais/index.html (centrais de laudos)
 
-Montada a partir do `<head>`/CSS/header/footer de `cadastro/` + tabela de volumetria e popup de fabricantes (`fabData`) do `entendimento/`. Blocos numerados na tela:
+Layout compacto em grade de 12 colunas (`.grid-12` + `.c-N`; no celular vira 1 coluna, `.m-6` mantém meia largura) no bloco 1 e nos cards de pessoa. Montada a partir do `<head>`/CSS/header/footer de `cadastro/` + tabela de volumetria e popup de fabricantes (`fabData`) do `entendimento/`. Blocos numerados na tela:
 
 1. **Dados da Central** — CNPJ (consulta BrasilAPI **automática** ao completar 14 dígitos e no `blur`; botão "Consultar" continua como reserva), Razão Social, Nome Fantasia, endereço (CEP também busca sozinho ao completar 8 dígitos/`blur`, só se a pessoa alterar o CEP — o CEP vindo do CNPJ não dispara nova busca), Tipo de Serviço (mesmas opções do cadastro). Sem Nº funcionários e sem vencimento.
 2. **Exames e Volumetria** — checkboxes `ex-ecg/holter/mapa/ergo`; a linha da tabela só é liberada quando o exame é marcado. Obrigatório: ≥ 1 exame e, para cada exame marcado, `ap-*` e `vol-*`. Marca (`eq-*`) opcional.
-3. **Pessoas envolvidas na implantação** — cards dinâmicos `pes_{idx}_campo` (`addPessoa`/`removePessoa`), "Responsável por" em `<select>` (`FUNCOES`: Responsável implantação, Técnico de enfermagem, Enfermeira, Responsável laudos, Outro → campo texto `pes_{idx}_funcao_outro`). Botões "Igual a" (`refreshIdem`/`idemPessoa`) listam as pessoas acima com nome preenchido. Regra: **pelo menos 1 "Responsável implantação"** (bloqueia o envio).
+3. **Pessoas envolvidas na implantação** — cards dinâmicos `pes_{idx}_campo` (`addPessoa`/`removePessoa`), "Responsável por" em `<select>` (`FUNCOES`: Responsável implantação, Proprietário, Gerente, Supervisor(a), Responsável laudos, Enfermeira, Técnico de enfermagem, Secretária, Recepção, Financeiro, TI, Outro → campo texto `pes_{idx}_funcao_outro` logo abaixo do select). Botões "Igual a" (`refreshIdem`/`idemPessoa`) listam as pessoas acima com nome preenchido. Regra: **pelo menos 1 "Responsável implantação"** (bloqueia o envio).
 4. **Logotipo** — upload opcional (imagem até 5 MB), base64 igual ao cadastro.
 
 **Payload** (o `Code.gs` lê exatamente estas chaves):
@@ -161,7 +161,7 @@ Montada a partir do `<head>`/CSS/header/footer de `cadastro/` + tabela de volume
 
 ## Pendências
 
-- **Cadastro de Centrais:** publicada e `Code.gs` implantado (09/11/2026). Falta o teste real (Doc na pasta nova + e-mail).
+- **Cadastro de Centrais:** publicada, `Code.gs` implantado e teste real OK (09/11/2026 — Doc criado em https://drive.google.com/drive/folders/1GSrBzTpkbD9JFoFhul80-zlRiJiDYY7w). Confirmar com Rodrigo se o e-mail chegou.
 - Confirmar se o e-mail de alerta está chegando após as correções (antes nunca chegava; causa não foi isolada).
 - Remote `origin` já reconfigurado sem token (09/11/2026, login via Git Credential Manager). Falta só revogar o token antigo em https://github.com/settings/tokens.
 - Submissões feitas durante a janela em que o script esteve quebrado não são recuperáveis (nada foi gravado); pedir reenvio se houver lead real.

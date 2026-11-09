@@ -423,9 +423,31 @@
     /* ── PESSOAS ── */
     .sec-hint { font-size: 12px; color: var(--text-muted); margin: -10px 0 20px; line-height: 1.6; }
     .sec-hint strong { color: var(--text-label); font-weight: 600; }
-    .pes-funcao-outro { display: none; }
-    .pes-funcao-outro.show { display: flex; }
+    .pes-funcao-outro { display: none; margin-top: 6px; }
+    .pes-funcao-outro.show { display: block; }
     .upload-grid.single { grid-template-columns: 1fr; }
+
+    /* ── GRADE COMPACTA (12 colunas) — Dados da Central e cards de pessoas ── */
+    .grid-12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px 14px; }
+    .grid-12 .c-2  { grid-column: span 2; }
+    .grid-12 .c-3  { grid-column: span 3; }
+    .grid-12 .c-4  { grid-column: span 4; }
+    .grid-12 .c-5  { grid-column: span 5; }
+    .grid-12 .c-6  { grid-column: span 6; }
+    .grid-12 .c-7  { grid-column: span 7; }
+    .grid-12 .c-12 { grid-column: 1 / -1; }
+    .grid-12 .field { gap: 5px; }
+    .grid-12 .field input, .grid-12 .field select { padding: 10px 12px; font-size: 13px; }
+    .grid-12 .field select { padding-right: 32px; background-position: right 12px center; }
+    .grid-12 .field.field-error select:valid { border-color: rgba(141,122,82,0.45) !important; box-shadow: none !important; animation: none; }
+    .grid-12 .cnpj-btn, .grid-12 .cep-btn { padding: 10px 12px; }
+    .grid-12 .cnpj-status, .grid-12 .cep-status { grid-column: 1 / -1; margin: -6px 0 0; min-height: 0; }
+    .grid-12 .cnpj-status:empty, .grid-12 .cep-status:empty { display: none; }
+    .rep-block .grid-12 { margin-top: 2px; }
+    @media (max-width: 600px) {
+      .grid-12 > * { grid-column: 1 / -1 !important; }
+      .grid-12 > .m-6 { grid-column: span 6 !important; }
+    }
 
     @media (max-width: 600px) {
       .op-table thead th, .op-table tbody td { padding: 8px 6px; }
@@ -465,67 +487,17 @@
   <div class="sec-card">
     <div class="section-title">1 · Dados da Central</div>
 
-    <div class="form-grid">
+    <div class="grid-12">
 
-      <div class="field full">
+      <div class="field c-7">
         <label for="cnpj">CNPJ <span class="req">*</span></label>
         <div class="cnpj-row">
           <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18" autocomplete="off" />
           <button type="button" class="cnpj-btn" id="cnpjBtn" onclick="buscarCNPJ()">Consultar</button>
         </div>
-        <span class="cnpj-status" id="cnpjStatus"></span>
       </div>
 
-      <div class="field full">
-        <label for="razao_social">Razão Social <span class="req">*</span></label>
-        <input type="text" id="razao_social" name="razao_social" placeholder="Preenchido automaticamente ao consultar o CNPJ" />
-      </div>
-
-      <div class="field full">
-        <label for="nome_fantasia">Nome Fantasia <span class="req">*</span></label>
-        <input type="text" id="nome_fantasia" name="nome_fantasia" placeholder="Preenchido automaticamente ao consultar o CNPJ" />
-      </div>
-
-      <div class="field full">
-        <label for="cep">CEP <span class="req">*</span></label>
-        <div class="cep-row">
-          <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" autocomplete="off" />
-          <button type="button" class="cep-btn" id="cepBtn" onclick="buscarCEP()">Buscar</button>
-        </div>
-        <span class="cep-status" id="cepStatus"></span>
-      </div>
-
-      <div class="field full">
-        <label for="logradouro">Logradouro <span class="req">*</span></label>
-        <input type="text" id="logradouro" name="logradouro" placeholder="Preenchido automaticamente ao buscar o CEP" />
-      </div>
-
-      <div class="field">
-        <label for="numero">Número <span class="req">*</span></label>
-        <input type="text" id="numero" name="numero" placeholder="Ex: 142" />
-      </div>
-
-      <div class="field">
-        <label for="complemento">Complemento <span class="opt">(opcional)</span></label>
-        <input type="text" id="complemento" name="complemento" placeholder="Sala, andar, bloco…" />
-      </div>
-
-      <div class="field">
-        <label for="bairro">Bairro <span class="req">*</span></label>
-        <input type="text" id="bairro" name="bairro" placeholder="Preenchido automaticamente" />
-      </div>
-
-      <div class="field">
-        <label for="cidade">Cidade <span class="req">*</span></label>
-        <input type="text" id="cidade" name="cidade" placeholder="Preenchido automaticamente" />
-      </div>
-
-      <div class="field">
-        <label for="estado">Estado <span class="req">*</span></label>
-        <input type="text" id="estado" name="estado" placeholder="UF" maxlength="2" style="text-transform:uppercase" />
-      </div>
-
-      <div class="field">
+      <div class="field c-5">
         <label for="tipo_servico">Tipo de Serviço <span class="req">*</span></label>
         <select id="tipo_servico" name="tipo_servico">
           <option value="" disabled selected>Selecione…</option>
@@ -538,6 +510,58 @@
           <option>Pronto-Socorro</option>
           <option>Outros</option>
         </select>
+      </div>
+
+      <span class="cnpj-status c-12" id="cnpjStatus"></span>
+
+      <div class="field c-7">
+        <label for="razao_social">Razão Social <span class="req">*</span></label>
+        <input type="text" id="razao_social" name="razao_social" placeholder="Preenchido pelo CNPJ" />
+      </div>
+
+      <div class="field c-5">
+        <label for="nome_fantasia">Nome Fantasia <span class="req">*</span></label>
+        <input type="text" id="nome_fantasia" name="nome_fantasia" placeholder="Preenchido pelo CNPJ" />
+      </div>
+
+      <div class="field c-4">
+        <label for="cep">CEP <span class="req">*</span></label>
+        <div class="cep-row">
+          <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" autocomplete="off" />
+          <button type="button" class="cep-btn" id="cepBtn" onclick="buscarCEP()">Buscar</button>
+        </div>
+      </div>
+
+      <div class="field c-6">
+        <label for="logradouro">Logradouro <span class="req">*</span></label>
+        <input type="text" id="logradouro" name="logradouro" placeholder="Rua, avenida…" />
+      </div>
+
+      <div class="field c-2 m-6">
+        <label for="numero">Nº <span class="req">*</span></label>
+        <input type="text" id="numero" name="numero" placeholder="142" />
+      </div>
+
+      <span class="cep-status c-12" id="cepStatus"></span>
+
+      <div class="field c-3 m-6">
+        <label for="complemento">Complemento <span class="opt">(opc.)</span></label>
+        <input type="text" id="complemento" name="complemento" placeholder="Sala, andar…" />
+      </div>
+
+      <div class="field c-3">
+        <label for="bairro">Bairro <span class="req">*</span></label>
+        <input type="text" id="bairro" name="bairro" placeholder="Bairro" />
+      </div>
+
+      <div class="field c-4 m-6">
+        <label for="cidade">Cidade <span class="req">*</span></label>
+        <input type="text" id="cidade" name="cidade" placeholder="Cidade" />
+      </div>
+
+      <div class="field c-2 m-6">
+        <label for="estado">UF <span class="req">*</span></label>
+        <input type="text" id="estado" name="estado" placeholder="UF" maxlength="2" style="text-transform:uppercase" />
       </div>
 
     </div>
@@ -950,7 +974,7 @@
   });
 
   /* ── PESSOAS (dinâmico) ── */
-  const FUNCOES = ['Responsável implantação','Técnico de enfermagem','Enfermeira','Responsável laudos','Outro'];
+  const FUNCOES = ['Responsável implantação','Proprietário','Gerente','Supervisor(a)','Responsável laudos','Enfermeira','Técnico de enfermagem','Secretária','Recepção','Financeiro','TI','Outro'];
   const FUNCAO_IMPLANTACAO = 'Responsável implantação';
   let pesCount = 0;
 
@@ -966,31 +990,28 @@
         '<button type="button" class="rep-remove-btn" onclick="removePessoa(this)">Remover</button>' +
       '</div>' +
       '<div class="idem-row" style="display:none"></div>' +
-      '<div class="form-grid">' +
-        '<div class="field">' +
+      '<div class="grid-12">' +
+        '<div class="field c-5">' +
           '<label for="' + p + 'funcao">Responsável por <span class="req">*</span></label>' +
-          '<select id="' + p + 'funcao" onchange="toggleFuncaoOutro(' + idx + ')">' +
+          '<select required id="' + p + 'funcao" onchange="toggleFuncaoOutro(' + idx + ')">' +
             '<option value="" disabled selected>Selecione…</option>' +
             FUNCOES.map(function(f) { return '<option>' + f + '</option>'; }).join('') +
           '</select>' +
+          '<input type="text" class="pes-funcao-outro" id="' + p + 'funcao_outro" placeholder="Qual função? Ex: Recepção, Faturamento…" />' +
         '</div>' +
-        '<div class="field pes-funcao-outro" id="' + p + 'funcao_outro_wrap">' +
-          '<label for="' + p + 'funcao_outro">Qual função? <span class="req">*</span></label>' +
-          '<input type="text" id="' + p + 'funcao_outro" placeholder="Ex: Recepção, TI, Faturamento…" />' +
-        '</div>' +
-        '<div class="field full">' +
+        '<div class="field c-7">' +
           '<label for="' + p + 'nome">Nome Completo <span class="req">*</span></label>' +
           '<input type="text" id="' + p + 'nome" placeholder="Nome completo" oninput="refreshIdem()" />' +
         '</div>' +
-        '<div class="field">' +
-          '<label for="' + p + 'nascimento">Data de Nascimento <span class="req">*</span></label>' +
+        '<div class="field c-3 m-6">' +
+          '<label for="' + p + 'nascimento">Nascimento <span class="req">*</span></label>' +
           '<input type="text" id="' + p + 'nascimento" placeholder="DD/MM/AAAA" maxlength="10" oninput="this.value=maskDate(this.value)" />' +
         '</div>' +
-        '<div class="field">' +
+        '<div class="field c-5">' +
           '<label for="' + p + 'email">E-mail <span class="req">*</span></label>' +
           '<input type="email" id="' + p + 'email" placeholder="email@exemplo.com.br" />' +
         '</div>' +
-        '<div class="field">' +
+        '<div class="field c-4 m-6">' +
           '<label for="' + p + 'celular">Celular <span class="req">*</span></label>' +
           '<input type="text" id="' + p + 'celular" placeholder="(00) 00000-0000" maxlength="15" oninput="this.value=maskPhone(this.value)" />' +
         '</div>' +
@@ -1006,7 +1027,9 @@
 
   function toggleFuncaoOutro(idx) {
     const isOutro = document.getElementById('pes_' + idx + '_funcao').value === 'Outro';
-    document.getElementById('pes_' + idx + '_funcao_outro_wrap').classList.toggle('show', isOutro);
+    const outro = document.getElementById('pes_' + idx + '_funcao_outro');
+    outro.classList.toggle('show', isOutro);
+    if (isOutro) outro.focus();
   }
 
   /* Renumera os cards e esconde "Remover" quando só sobra 1 */
@@ -1054,7 +1077,7 @@
   };
   const pesLabels = {
     funcao: 'Responsável por', funcao_outro: 'Função', nome: 'Nome Completo',
-    nascimento: 'Data de Nascimento', email: 'E-mail', celular: 'Celular'
+    nascimento: 'Nascimento', email: 'E-mail', celular: 'Celular'
   };
 
   function clearFieldErrors() {
