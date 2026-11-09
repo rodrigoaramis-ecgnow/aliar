@@ -161,9 +161,9 @@ Montada a partir do `<head>`/CSS/header/footer de `cadastro/` + tabela de volume
 
 ## Pendências
 
-- **Cadastro de Centrais:** LP e `Code.gs` prontos no repo (03/11/2026). Falta colar o `Code.gs` no Apps Script (Nova versão), publicar e fazer o teste real.
+- **Cadastro de Centrais:** publicada e `Code.gs` implantado (09/11/2026). Falta o teste real (Doc na pasta nova + e-mail).
 - Confirmar se o e-mail de alerta está chegando após as correções (antes nunca chegava; causa não foi isolada).
-- Remote `origin` do repo está com token do GitHub embutido na URL → revogar o token e reconfigurar sem credencial (Git Credential Manager).
+- Remote `origin` já reconfigurado sem token (09/11/2026, login via Git Credential Manager). Falta só revogar o token antigo em https://github.com/settings/tokens.
 - Submissões feitas durante a janela em que o script esteve quebrado não são recuperáveis (nada foi gravado); pedir reenvio se houver lead real.
 - CRM RD Station: integração dos docs gerados com pipeline de negociação.
 
