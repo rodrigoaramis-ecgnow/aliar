@@ -379,7 +379,7 @@
     }
     .op-table input:focus { border-bottom-color: var(--gold); box-shadow: none; }
     .op-table input::placeholder { color: var(--text-muted); opacity: 0.5; font-size: 12px; }
-    .op-table input.cell-error { border-bottom-color: #f87171; }
+    .op-table input.cell-error, .op-table .fab-trigger.cell-error { border-bottom-color: #f87171; }
     .op-table thead th:nth-child(1) { width: 16%; }
     .op-table thead th:nth-child(2) { width: 20%; }
     .op-table thead th:nth-child(3) { width: 22%; }
@@ -716,7 +716,7 @@
           <th>Exame</th>
           <th>Qtd.<br><span style="font-weight:500;opacity:0.8">Aparelhos</span></th>
           <th>Qtd.<br><span style="font-weight:500;opacity:0.8">Exames / Mês</span></th>
-          <th>Marca dos Aparelhos <span style="font-weight:400;opacity:0.7;text-transform:none">(opcional)</span></th>
+          <th>Marca dos Aparelhos</th>
         </tr>
       </thead>
       <tbody>
@@ -777,7 +777,7 @@
       </svg>
       Marque os exames acima para liberar a linha correspondente.
     </div>
-    <div class="op-err" id="opErr">Preencha a quantidade de aparelhos e de exames/mês dos exames marcados.</div>
+    <div class="op-err" id="opErr">Preencha aparelhos, exames/mês e marca de cada exame marcado.</div>
   </div>
 
   <!-- ═══ 4. PESSOAS ENVOLVIDAS NA IMPLANTAÇÃO ═══ -->
@@ -1052,6 +1052,7 @@
       inp.tabIndex = on ? 0 : -1;
       if (!on) inp.classList.remove('cell-error');
     });
+    if (!on) document.getElementById('eq-' + ex + '-trigger').classList.remove('cell-error');
     const fe = document.getElementById('field-exames');
     fe.classList.remove('field-error');
     const msg = fe.querySelector('.field-err-msg');
@@ -1102,6 +1103,7 @@
     const display = document.getElementById(fabTarget + '-display');
     display.textContent = selected.length ? selected.join(', ') : 'Selecione os fabricantes';
     display.classList.toggle('fab-placeholder', !selected.length);
+    if (selected.length) { document.getElementById(fabTarget + '-trigger').classList.remove('cell-error'); atualizarOpErr(); }
   }
   function closeFabPopup() {
     document.getElementById('fabPopup').classList.remove('show');
@@ -1114,7 +1116,8 @@
   });
 
   /* ── PESSOAS (dinâmico) ── */
-  const FUNCOES = ['Responsável implantação','Proprietário','Gerente','Supervisor(a)','Responsável laudos','Enfermeira','Técnico de enfermagem','Secretária','Recepção','Financeiro','TI','Outro'];
+  const FUNCOES = ['Responsável implantação','Proprietário','Gerente','Supervisor(a)','Responsável laudos','Enfermeira','Técnico de enfermagem','Secretária','Recepção','Financeiro','TI']
+    .sort(function(a, b) { return a.localeCompare(b, 'pt-BR'); }).concat('Outro');
   const FUNCAO_IMPLANTACAO = 'Responsável implantação';
   let pesCount = 0;
 
@@ -1310,6 +1313,11 @@
         const el = document.getElementById(pre + ex);
         if (!el.value.trim()) { el.classList.add('cell-error'); celulaVazia = true; erros.push(el.id); }
       });
+      // Marca também é obrigatória na linha do exame marcado
+      if (!document.getElementById('eq-' + ex).value.trim()) {
+        document.getElementById('eq-' + ex + '-trigger').classList.add('cell-error');
+        celulaVazia = true; erros.push('eq-' + ex + '-trigger');
+      }
     });
     if (celulaVazia) document.getElementById('opErr').classList.add('show');
 

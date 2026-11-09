@@ -95,8 +95,8 @@ Layout: lista lateral `#savedPanel` (centrais salvas, com miniatura da logo + no
 
 1. **Empresa contratante** (uma vez) — `ct_cnpj` (consulta BrasilAPI automática), `ct_razao` (obrigatório), `ct_fantasia` (opcional). Só referência: nomeia a pasta do cliente no Drive e aparece no topo de cada Doc.
 2. **Dados da Central** — CNPJ (consulta **automática** ao completar 14 dígitos e no `blur`; botão "Consultar" como reserva), Razão Social, Nome Fantasia, endereço (CEP busca sozinho só se a pessoa alterar o CEP), Tipo de Serviço.
-3. **Exames e Volumetria** — `ex-*`; linha da tabela liberada ao marcar (`setExame`). Obrigatório: ≥ 1 exame e `ap-*`/`vol-*` dos marcados. Marca (`eq-*`) opcional.
-4. **Pessoas envolvidas na implantação** — cards `pes_{idx}_campo`, "Responsável por" (`FUNCOES`: Responsável implantação, Proprietário, Gerente, Supervisor(a), Responsável laudos, Enfermeira, Técnico de enfermagem, Secretária, Recepção, Financeiro, TI, Outro → `pes_{idx}_funcao_outro`). "Igual a" só entre pessoas da **mesma** central. Regra: **≥ 1 "Responsável implantação" por central**.
+3. **Exames e Volumetria** — `ex-*`; linha da tabela liberada ao marcar (`setExame`). Obrigatório: ≥ 1 exame e, em cada exame marcado, `ap-*`, `vol-*` **e marca** (`eq-*`, erro no `eq-*-trigger`).
+4. **Pessoas envolvidas na implantação** — cards `pes_{idx}_campo`, "Responsável por" (`FUNCOES`, exibido em **ordem alfabética** com "Outro" por último → `pes_{idx}_funcao_outro`). "Igual a" só entre pessoas da **mesma** central. Regra: **≥ 1 "Responsável implantação" por central**.
 5. **Logotipo desta central** — opcional, imagem até 5 MB (base64).
 6. **Prévia** — cartões simples (Prioridade N, logo, nome fantasia, cidade/UF) com ↑↓, Editar e Remover. **A ordem só é ajustada aqui.** Botão "Confirmar e enviar".
 
@@ -149,6 +149,7 @@ Layout: lista lateral `#savedPanel` (centrais salvas, com miniatura da logo + no
 ### Diagnóstico rápido
 - Painel **Execuções** (ícone ▤▶, não o relógio de "Acionadores"). Status "Falha" com duração < 1 s = erro de sintaxe/carga do arquivo.
 - O `doGet` devolve o erro como texto. Chamar o `/exec` com `?data=<base64>` via `curl -L` mostra a mensagem exata (cuidado: se funcionar, cria Doc real).
+- Doc "Central ALIAR — Central — <data>" com seções vazias na raiz da pasta das Centrais = o `/exec` ainda roda a versão **antiga** do script (anterior às várias centrais). Conferir se o editor tem `criarDocsCentrais` e se a implantação usada pela LP foi para Nova versão.
 - Doc com ~1 KB parado fora da pasta = função abortou no meio (exceção engolida pelo `try/catch` do `doGet`).
 - Conferir sempre que as chaves lidas no `Code.gs` batem com as do payload da LP (o Nome Fantasia/Endereço do cadastro saíam em branco por isso).
 
