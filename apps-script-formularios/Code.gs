@@ -1,5 +1,8 @@
 const PASTA_ENTREVISTA = '1_z76Xm_9Jz7guQR4anvEPJnVwjys3IGw';
 const PASTA_CADASTRO   = '144OpeDuNke782I-NAdSIeCbE23h38j_q';
+// Centrais: a pasta é criada automaticamente no 1º envio, ao lado da PASTA_CADASTRO
+// (dentro de "[Code] Respostas LP."), e reaproveitada nos envios seguintes.
+const PASTA_CENTRAIS_NOME = 'Respostas - Centrais ALIAR';
 const EMAIL_ALERTA     = 'rodrigo.aramis@ecgnow.com.br';
 
 // ── Title Case: primeira letra de cada palavra em maiúscula ──
@@ -18,6 +21,7 @@ function doGet(e) {
     var tipo  = dados.origem || '';
     if (tipo === 'aliar-formulario-web')           criarDocEntrevista(dados);
     else if (tipo === 'aliar-cadastro-contratual') criarDocCadastro(dados);
+    else if (tipo === 'aliar-cadastro-centrais')   criarDocCentral(dados);
     return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
   } catch (err) {
     return ContentService.createTextOutput('erro: ' + err.message).setMimeType(ContentService.MimeType.TEXT);
@@ -27,7 +31,8 @@ function doGet(e) {
 function doPost(e) {
   try {
     const dados = JSON.parse(e.postData.contents);
-    if (dados.origem === 'aliar-cadastro-contratual') criarDocCadastro(dados);
+    if (dados.origem === 'aliar-cadastro-contratual')    criarDocCadastro(dados);
+    else if (dados.origem === 'aliar-cadastro-centrais') criarDocCentral(dados);
     else criarDocEntrevista(dados);
     return ContentService.createTextOutput('OK');
   } catch(err) {
@@ -203,6 +208,94 @@ function criarDocCadastro(d) {
              (docsSalvos.length ? '\n\nDocumentos:\n' + docsSalvos.map(function(x) { return '- ' + x.label + ': ' + x.url; }).join('\n') : '') +
              '\n\nPreenchido em: ' + new Date().toLocaleString('pt-BR')
   });
+}
+
+function criarDocCentral(d) {
+  const c       = d.central || {};
+  const end     = d.endereco || {};
+  const pessoas = d.pessoas || [];
+  const central = tc(c.nome_fantasia || c.razao_social || c.cnpj || 'Central');
+  const titulo  = 'Central ALIAR — ' + central + ' — ' + new Date().toLocaleDateString('pt-BR');
+  const pasta   = obterPastaCentrais();
+  const doc  = DocumentApp.create(titulo);
+  const body = doc.getBody();
+
+  body.appendParagraph('CADASTRO DE CENTRAL ALIAR').setHeading(DocumentApp.ParagraphHeading.HEADING1);
+  body.appendParagraph('Gerado em: ' + new Date().toLocaleString('pt-BR'));
+  body.appendHorizontalRule();
+
+  sec(body, '1. DADOS DA CENTRAL');
+  const cidadeUF = [tc(end.cidade), (end.estado || '').toUpperCase()].filter(Boolean).join('/');
+  linha(body, 'Razão Social',    [tc(c.razao_social), tc(c.nome_fantasia)].filter(Boolean).join(' | '));
+  linha(body, 'CNPJ',            c.cnpj);
+  linha(body, 'Tipo de Serviço', tc(c.tipo_servico));
+  linha(body, 'Cidade/Estado',   cidadeUF);
+  linha(body, 'Endereço', [tc(end.logradouro), end.numero, tc(end.complemento), tc(end.bairro), tc(end.cidade), (end.estado || '').toUpperCase()].filter(Boolean).join(', '));
+  linha(body, 'CEP',             end.cep);
+
+  sec(body, '2. EXAMES E VOLUMETRIA');
+  linha(body, 'Exames realizados', (d.exames || []).join(', '));
+  const exames = ['ecg','holter','mapa','ergo'];
+  const nomes  = {ecg:'ECG', holter:'Holter', mapa:'MAPA', ergo:'T. Ergo'};
+  exames.forEach(function(ex) {
+    if (!d['ap_'+ex] && !d['vol_'+ex]) return;   // só os exames marcados na LP
+    const ap  = d['ap_'+ex]  || '—';
+    const vol = d['vol_'+ex] || '—';
+    const eq  = tc(d['eq_'+ex]) || '—';
+    linha(body, nomes[ex], 'Aparelhos: ' + ap + ' | Exames/mês: ' + vol + ' | Marca: ' + eq);
+  });
+
+  sec(body, '3. PESSOAS ENVOLVIDAS NA IMPLANTAÇÃO');
+  pessoas.forEach(function(p, i) {
+    body.appendParagraph('Pessoa ' + (i+1) + ' — ' + tc(p.funcao)).setBold(true);
+    linha(body, 'Nome',       tc(p.nome));
+    linha(body, 'Nascimento', p.nascimento);
+    linha(body, 'E-mail',     p.email);
+    linha(body, 'Celular',    p.celular);
+  });
+
+  // ── LOGOTIPO — salva o arquivo (base64) na mesma pasta do Doc ──
+  const documentos = d.documentos || {};
+  let logoUrl = '';
+  if (documentos.logotipo) {
+    logoUrl = salvarArquivoDrive(
+      documentos.logotipo,
+      documentos.logotipo_nome || 'logotipo',
+      documentos.logotipo_tipo || 'image/png',
+      central.replace(/[^\w\-]+/g, '_') + '_logotipo',
+      pasta.getId()
+    );
+  }
+  if (logoUrl) {
+    sec(body, '4. LOGOTIPO');
+    const p = body.appendParagraph('');
+    p.appendText('Logotipo: ').setBold(true);
+    p.appendText(logoUrl).setLinkUrl(logoUrl);
+  }
+
+  doc.saveAndClose();
+  const arquivoDoc = DriveApp.getFileById(doc.getId());
+  arquivoDoc.moveTo(pasta);
+
+  const implantacao = pessoas.filter(function(p) { return p.funcao === 'Responsável implantação'; });
+  MailApp.sendEmail({
+    to:      EMAIL_ALERTA,
+    subject: '🔔 Nova Central ALIAR — ' + central,
+    body:    'Central: ' + central + '\nCNPJ: ' + (c.cnpj || '—') + '\nCidade: ' + (cidadeUF || '—') +
+             '\nExames: ' + ((d.exames || []).join(', ') || '—') +
+             '\n\nResponsável implantação:\n' + (implantacao.map(function(p) { return '- ' + tc(p.nome) + ' · ' + (p.celular || '—') + ' · ' + (p.email || '—'); }).join('\n') || '—') +
+             '\n\nPessoas cadastradas: ' + pessoas.length +
+             (logoUrl ? '\nLogotipo: ' + logoUrl : '') +
+             '\n\nDoc: ' + arquivoDoc.getUrl() +
+             '\n\nPreenchido em: ' + new Date().toLocaleString('pt-BR')
+  });
+}
+
+// ── Pasta das Centrais: procura "Respostas - Centrais ALIAR" ao lado da PASTA_CADASTRO; cria se não existir ──
+function obterPastaCentrais() {
+  const pai = DriveApp.getFolderById(PASTA_CADASTRO).getParents().next();
+  const existentes = pai.getFoldersByName(PASTA_CENTRAIS_NOME);
+  return existentes.hasNext() ? existentes.next() : pai.createFolder(PASTA_CENTRAIS_NOME);
 }
 
 // ── Formata número com separador de milhar (sem depender de Intl/toLocaleString) ──
