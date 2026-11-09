@@ -11,7 +11,7 @@ Repositório Git próprio (remote: `rodrigoaramis-ecgnow/aliar`, branch `master`
   entendimento/index.html      — LP de Entendimento (mapeamento operacional do lead)
   cadastro/index.html          — LP de Cadastro de empresas (dados contratuais + 4 uploads)
   cadastro/obrigado.html       — Página de agradecimento pós-cadastro
-  centrais/index.html          — LP de Cadastro de Centrais de laudos (central + exames + pessoas + logo)
+  centrais/index.html          — LP de Cadastro de Centrais (contratante + N centrais com prévia/prioridade)
   centrais/obrigado.html       — Cópia de cadastro/obrigado.html
   apps-script-formularios/Code.gs — CÓPIA DE REFERÊNCIA do script "ALIAR - Integração Formulários"
   --- NÃO PERTENCEM A ESTE PROJETO (têm chat próprio) ---
@@ -87,29 +87,38 @@ Títulos de cards (`section-title`, `sec-header`) e bordas de selects usam tom o
 
 ---
 
-## centrais/index.html (centrais de laudos)
+## centrais/index.html (centrais de laudos — várias por envio)
 
-Layout compacto em grade de 12 colunas (`.grid-12` + `.c-N`; no celular vira 1 coluna, `.m-6` mantém meia largura) no bloco 1 e nos cards de pessoa. Montada a partir do `<head>`/CSS/header/footer de `cadastro/` + tabela de volumetria e popup de fabricantes (`fabData`) do `entendimento/`. Blocos numerados na tela:
+**Contexto de negócio:** quem preenche é a **contratante** (empresa do médico laudista); cada **central** é um cliente dela. Um envio = 1 contratante + N centrais, em ordem de prioridade de implantação. Cada central tem pessoas e logotipo próprios.
 
-1. **Dados da Central** — CNPJ (consulta BrasilAPI **automática** ao completar 14 dígitos e no `blur`; botão "Consultar" continua como reserva), Razão Social, Nome Fantasia, endereço (CEP também busca sozinho ao completar 8 dígitos/`blur`, só se a pessoa alterar o CEP — o CEP vindo do CNPJ não dispara nova busca), Tipo de Serviço (mesmas opções do cadastro). Sem Nº funcionários e sem vencimento.
-2. **Exames e Volumetria** — checkboxes `ex-ecg/holter/mapa/ergo`; a linha da tabela só é liberada quando o exame é marcado. Obrigatório: ≥ 1 exame e, para cada exame marcado, `ap-*` e `vol-*`. Marca (`eq-*`) opcional.
-3. **Pessoas envolvidas na implantação** — cards dinâmicos `pes_{idx}_campo` (`addPessoa`/`removePessoa`), "Responsável por" em `<select>` (`FUNCOES`: Responsável implantação, Proprietário, Gerente, Supervisor(a), Responsável laudos, Enfermeira, Técnico de enfermagem, Secretária, Recepção, Financeiro, TI, Outro → campo texto `pes_{idx}_funcao_outro` logo abaixo do select). Botões "Igual a" (`refreshIdem`/`idemPessoa`) listam as pessoas acima com nome preenchido. Regra: **pelo menos 1 "Responsável implantação"** (bloqueia o envio).
-4. **Logotipo** — upload opcional (imagem até 5 MB), base64 igual ao cadastro.
+Layout: lista lateral `#savedPanel` (centrais salvas, com miniatura da logo + nome fantasia + cidade; sticky no desktop, vira faixa no topo < 1100 px) + formulário. Grade compacta de 12 colunas (`.grid-12` + `.c-N`; no celular 1 coluna, `.m-6` meia largura). Montada a partir do `<head>`/CSS/header/footer de `cadastro/` + tabela de volumetria e popup `fabData` do `entendimento/`. Blocos numerados na tela:
+
+1. **Empresa contratante** (uma vez) — `ct_cnpj` (consulta BrasilAPI automática), `ct_razao` (obrigatório), `ct_fantasia` (opcional). Só referência: nomeia a pasta do cliente no Drive e aparece no topo de cada Doc.
+2. **Dados da Central** — CNPJ (consulta **automática** ao completar 14 dígitos e no `blur`; botão "Consultar" como reserva), Razão Social, Nome Fantasia, endereço (CEP busca sozinho só se a pessoa alterar o CEP), Tipo de Serviço.
+3. **Exames e Volumetria** — `ex-*`; linha da tabela liberada ao marcar (`setExame`). Obrigatório: ≥ 1 exame e `ap-*`/`vol-*` dos marcados. Marca (`eq-*`) opcional.
+4. **Pessoas envolvidas na implantação** — cards `pes_{idx}_campo`, "Responsável por" (`FUNCOES`: Responsável implantação, Proprietário, Gerente, Supervisor(a), Responsável laudos, Enfermeira, Técnico de enfermagem, Secretária, Recepção, Financeiro, TI, Outro → `pes_{idx}_funcao_outro`). "Igual a" só entre pessoas da **mesma** central. Regra: **≥ 1 "Responsável implantação" por central**.
+5. **Logotipo desta central** — opcional, imagem até 5 MB (base64).
+6. **Prévia** — cartões simples (Prioridade N, logo, nome fantasia, cidade/UF) com ↑↓, Editar e Remover. **A ordem só é ajustada aqui.** Botão "Confirmar e enviar".
+
+**Fluxo (JS):** array `centrais` (ordem = prioridade) e `editando` (índice ou `null`). "Salvar e adicionar outra central" → `salvarCentral()` valida contratante + central, guarda e `limparCentral()`. "Revisar e enviar" → salva (se houver algo na tela) e `mostrarPrevia()`. Editar (lista lateral ou prévia) → `preencherCentral()` restaura tudo, inclusive a logo (`input._b64` + `preview.src`). `beforeunload` avisa se fechar a página com centrais não enviadas (não há rascunho salvo).
 
 **Payload** (o `Code.gs` lê exatamente estas chaves):
 ```
-{ central: { cnpj, razao_social, nome_fantasia, tipo_servico },   // nome_fantasia DENTRO de central
-  endereco: { cep, logradouro, numero, complemento, bairro, cidade, estado },
-  exames: ['ECG','Holter',...],
-  ap_ecg, vol_ecg, eq_ecg, ...        // mesmas chaves do entendimento, só dos exames marcados
-  pessoas: [{ funcao, nome, nascimento, email, celular }],   // "Outro" → funcao = texto digitado
-  documentos: { logotipo, logotipo_nome, logotipo_tipo },
+{ contratante: { cnpj, razao_social, nome_fantasia },
+  centrais: [{
+    prioridade,                                   // 1 = primeira a implantar
+    central:  { cnpj, razao_social, nome_fantasia, tipo_servico },
+    endereco: { cep, logradouro, numero, complemento, bairro, cidade, estado },
+    exames: ['ECG','Holter',...],
+    ap_ecg, vol_ecg, eq_ecg, ...                  // mesmas chaves do entendimento, só dos exames marcados
+    pessoas: [{ funcao, nome, nascimento, email, celular }],   // "Outro" → funcao = texto digitado
+    logotipo: { b64, nome, tipo } | null }],
   timestamp, origem: 'aliar-cadastro-centrais' }
 ```
 
-**Envio:** sempre POST `text/plain` no-cors (igual ao cadastro), `SCRIPT_URL` declarada 1x no topo do `<script>`. Redireciona para `obrigado.html`.
+**Envio:** POST `text/plain` no-cors, `SCRIPT_URL` declarada 1x no topo do `<script>`. Só a partir da Prévia (Enter no editor não envia). Redireciona para `obrigado.html`.
 
-> Teste local: `npx serve` remove o `.html` e a barra final (`/centrais`), então o redirecionamento local cai em `/obrigado`. No GitHub Pages (`/aliar/centrais/`) funciona normal. Para testar sem gerar Doc/e-mail, interceptar `window.fetch` no console.
+> Teste local: `npx serve` remove o `.html` e a barra final (`/centrais`), então o redirecionamento local cai em `/obrigado` (404). No GitHub Pages (`/aliar/centrais/`) funciona normal. Para testar sem gerar Doc, interceptar `window.fetch` no console.
 
 ---
 
@@ -120,14 +129,14 @@ Layout compacto em grade de 12 colunas (`.grid-12` + `.c-N`; no celular vira 1 c
 - **Pastas no Drive** (dentro de `[Code] Respostas LP.`):
   - `PASTA_ENTREVISTA = '1_z76Xm_9Jz7guQR4anvEPJnVwjys3IGw'` — https://drive.google.com/drive/folders/1_z76Xm_9Jz7guQR4anvEPJnVwjys3IGw
   - `PASTA_CADASTRO   = '144OpeDuNke782I-NAdSIeCbE23h38j_q'` — https://drive.google.com/drive/folders/144OpeDuNke782I-NAdSIeCbE23h38j_q
-  - `PASTA_CENTRAIS_NOME = 'Respostas - Centrais ALIAR'` — sem ID fixo: `obterPastaCentrais()` procura a pasta com esse nome ao lado da `PASTA_CADASTRO` e cria no 1º envio. Não renomear a pasta no Drive (senão o script cria outra).
-- **Funções:** `doGet`, `doPost`, `criarDocEntrevista`, `criarDocCadastro`, `criarDocCentral`, `obterPastaCentrais`, `consultarCNPJ`, `salvarArquivoDrive`, `formatarMilhar`, `autorizarPermissoes`, `tc`, `sec`, `linha`
-- **Roteamento por `origem`:** `'aliar-formulario-web'` → entrevista; `'aliar-cadastro-contratual'` → cadastro; `'aliar-cadastro-centrais'` → central (em `doGet` e `doPost`)
-- **Central:** Doc "Central ALIAR — <fantasia> — <data>" com seções 1–4 (dados, volumetria só dos exames marcados, pessoas com função, link do logotipo); logotipo salvo na mesma pasta; e-mail com Responsável implantação e link do Doc. Não usa serviço novo (sem nova autorização).
+  - `PASTA_CENTRAIS_NOME = 'Respostas - Centrais ALIAR'` — sem ID fixo: `obterPastaCentrais()` procura a pasta com esse nome ao lado da `PASTA_CADASTRO` e cria no 1º envio. Dentro dela, `obterPastaCliente()` usa/cria uma pasta por contratante: "<Nome> — <CNPJ>" (reaproveita pelos 14 dígitos do CNPJ no fim do nome). Não renomear essas pastas no Drive (perde o CNPJ do fim → o script cria outra). Pasta das Centrais: https://drive.google.com/drive/folders/1GSrBzTpkbD9JFoFhul80-zlRiJiDYY7w
+- **Funções:** `doGet`, `doPost`, `criarDocEntrevista`, `criarDocCadastro`, `criarDocsCentrais`, `criarDocCentral`, `obterPastaCentrais`, `obterPastaCliente`, `consultarCNPJ`, `salvarArquivoDrive`, `formatarMilhar`, `autorizarPermissoes`, `tc`, `sec`, `linha`
+- **Roteamento por `origem`:** `'aliar-formulario-web'` → entrevista; `'aliar-cadastro-contratual'` → cadastro; `'aliar-cadastro-centrais'` → `criarDocsCentrais` (em `doGet` e `doPost`)
+- **Centrais:** `criarDocsCentrais` gera **1 Doc por central** na pasta do cliente: "P<prioridade> — <fantasia> — <data>", com Contratante e "Prioridade X de N" no topo + seções 1–4 (dados, volumetria só dos exames marcados, pessoas com função, link do logotipo). Logo salva na mesma pasta como `P<n>_<fantasia>_logotipo_<data>`. **Sem e-mail**. Aceita também o formato antigo (1 central sem `centrais[]`). Não usa serviço novo.
 - **Teste local do Code.gs:** dá para rodar com Node simulando DocumentApp/DriveApp/MailApp e o payload capturado da LP — confere as chaves sem gerar Doc real.
 - **Entrevista:** gera Doc + seção final "DADOS CNPJ (RECEITA FEDERAL)" via BrasilAPI (`UrlFetchApp`), com `try/catch` que escreve o erro no próprio Doc.
-- **Cadastro:** gera Doc (Razão Social | Nome Fantasia, CNPJ, Cidade/Estado, endereço...) e salva os 4 arquivos na `PASTA_CADASTRO`, com links no Doc e no e-mail.
-- **Todo envio** gera e-mail de alerta para `rodrigo.aramis@ecgnow.com.br`.
+- **Cadastro:** gera Doc (Razão Social | Nome Fantasia, CNPJ, Cidade/Estado, endereço...) e salva os 4 arquivos na `PASTA_CADASTRO`, com links no Doc.
+- **Nenhum formulário envia e-mail de alerta** (removido em 09/11/2026 a pedido do Rodrigo: nunca chegava e não é necessário — os clientes avisam). `MailApp` e `EMAIL_ALERTA` saíram do `Code.gs`; não recolocar sem pedido.
 
 ### Como atualizar o script (sempre nesta ordem)
 1. Editar `apps-script-formularios/Code.gs` neste repo.
@@ -135,11 +144,11 @@ Layout compacto em grade de 12 colunas (`.grid-12` + `.c-N`; no celular vira 1 c
 3. Conferir o fim do arquivo: nenhum caractere solto após a última `}` (um "S" solto causou `ReferenceError` e falha em todas as execuções).
 4. Se o código passou a usar um serviço novo (`UrlFetchApp`, etc.): selecionar `autorizarPermissoes` no menu ao lado de ▶ Executar, rodar uma vez e aceitar a autorização. Só salvar/implantar NÃO pede essa permissão.
 5. Implantar → Gerenciar implantações → editar → **Nova versão** → Implantar. Só salvar não atualiza a URL publicada.
-6. Testar. O Doc vai para a pasta certa e o e-mail chega.
+6. Testar. O Doc vai para a pasta certa.
 
 ### Diagnóstico rápido
 - Painel **Execuções** (ícone ▤▶, não o relógio de "Acionadores"). Status "Falha" com duração < 1 s = erro de sintaxe/carga do arquivo.
-- O `doGet` devolve o erro como texto. Chamar o `/exec` com `?data=<base64>` via `curl -L` mostra a mensagem exata (cuidado: se funcionar, cria Doc e e-mail reais).
+- O `doGet` devolve o erro como texto. Chamar o `/exec` com `?data=<base64>` via `curl -L` mostra a mensagem exata (cuidado: se funcionar, cria Doc real).
 - Doc com ~1 KB parado fora da pasta = função abortou no meio (exceção engolida pelo `try/catch` do `doGet`).
 - Conferir sempre que as chaves lidas no `Code.gs` batem com as do payload da LP (o Nome Fantasia/Endereço do cadastro saíam em branco por isso).
 
@@ -161,8 +170,7 @@ Layout compacto em grade de 12 colunas (`.grid-12` + `.c-N`; no celular vira 1 c
 
 ## Pendências
 
-- **Cadastro de Centrais:** publicada, `Code.gs` implantado e teste real OK (09/11/2026 — Doc criado em https://drive.google.com/drive/folders/1GSrBzTpkbD9JFoFhul80-zlRiJiDYY7w). Confirmar com Rodrigo se o e-mail chegou.
-- Confirmar se o e-mail de alerta está chegando após as correções (antes nunca chegava; causa não foi isolada).
+- **Cadastro de Centrais (várias por envio):** LP e `Code.gs` prontos no repo (09/11/2026). Falta: colar o `Code.gs` inteiro no Apps Script (Nova versão), publicar e teste real com 2 centrais. A versão de 1 central já foi testada em produção (Doc "Central ALIAR — Osl" na raiz da pasta das Centrais, pode ser apagado).
 - Remote `origin` já reconfigurado sem token (09/11/2026, login via Git Credential Manager). Falta só revogar o token antigo em https://github.com/settings/tokens.
 - Submissões feitas durante a janela em que o script esteve quebrado não são recuperáveis (nada foi gravado); pedir reenvio se houver lead real.
 - CRM RD Station: integração dos docs gerados com pipeline de negociação.

@@ -454,6 +454,87 @@
       .op-table thead th { font-size: 9px; letter-spacing: 0; }
       .exam-tag { padding: 2px 5px; font-size: 10px; }
     }
+
+    /* ── VÁRIAS CENTRAIS: layout com lista lateral ── */
+    .page-layout {
+      max-width: 1140px; margin: 0 auto; padding: 0 24px;
+      display: grid; grid-template-columns: 250px minmax(0, 780px); gap: 28px; justify-content: center;
+    }
+    .page-layout .form-wrapper { max-width: none; margin: 0; padding: 40px 0 80px; }
+    .saved-panel {
+      position: sticky; top: 140px; align-self: start; margin-top: 40px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+    }
+    .saved-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-light); margin-bottom: 12px; }
+    .saved-empty { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+    .saved-item {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      background: var(--bg-input); border: 1px solid rgba(141,122,82,0.2); border-radius: 10px;
+      padding: 8px 10px; margin-bottom: 8px; cursor: pointer; font-family: inherit; color: var(--text-white);
+      transition: border-color 0.15s;
+    }
+    .saved-item:hover { border-color: var(--gold); }
+    .saved-item.ativo { border-color: var(--gold); background: var(--gold-glow); }
+    .saved-num { font-size: 10px; font-weight: 700; color: var(--gold-light); min-width: 14px; }
+    .logo-thumb {
+      width: 34px; height: 34px; border-radius: 7px; flex-shrink: 0; object-fit: contain;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-thumb.vazio { background: rgba(141,122,82,0.12); color: var(--gold-light); font-size: 12px; font-weight: 700; }
+    .saved-info { min-width: 0; }
+    .saved-nome { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .saved-cidade { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .central-banner {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: linear-gradient(135deg, rgba(141,122,82,0.16), rgba(141,122,82,0.05));
+      border: 1px solid rgba(141,122,82,0.45); border-radius: 14px;
+      padding: 14px 20px; margin: 8px 0 16px;
+    }
+    .central-banner strong { font-size: 15px; font-weight: 800; color: var(--text-white); }
+    .central-banner span { font-size: 12px; color: var(--text-muted); }
+
+    .editor-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+    .btn-secondary {
+      background: rgba(141,122,82,0.1); border: 1px solid var(--gold); color: var(--gold-light);
+      border-radius: 12px; padding: 15px 28px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: rgba(141,122,82,0.22); }
+
+    /* ── PRÉVIA ── */
+    .previa-item {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px;
+      padding: 10px 14px; margin-bottom: 10px;
+    }
+    .prio-badge {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;
+      color: #0c0a07; background: var(--gold-light); border-radius: 6px; padding: 4px 8px; white-space: nowrap;
+    }
+    .previa-info { flex: 1; min-width: 0; }
+    .previa-acoes { display: flex; gap: 6px; flex-shrink: 0; }
+    .mini-btn {
+      background: transparent; border: 1px solid var(--border); color: var(--text-label);
+      border-radius: 7px; padding: 5px 9px; font-size: 12px; cursor: pointer; font-family: inherit;
+    }
+    .mini-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold-light); }
+    .mini-btn:disabled { opacity: 0.3; cursor: default; }
+    .mini-btn.del { color: #fca5a5; border-color: rgba(248,113,113,0.3); }
+
+    @media (max-width: 1100px) {
+      .page-layout { grid-template-columns: minmax(0, 780px); gap: 0; }
+      .saved-panel { position: static; margin-top: 24px; }
+      .saved-panel.vazio { display: none; }
+      #savedList { display: flex; gap: 8px; overflow-x: auto; }
+      .saved-item { width: auto; min-width: 180px; margin-bottom: 0; }
+    }
+    @media (max-width: 600px) {
+      .page-layout { padding: 0 12px; }
+      .previa-item { flex-wrap: wrap; }
+      .previa-acoes { width: 100%; justify-content: flex-end; }
+      .central-banner { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
@@ -474,18 +555,54 @@
 <section class="hero">
   <h1>Bem-Vindo à <em>ECGNow / ALIAR</em></h1>
   <p class="hero-sub">
-    Parabéns pela decisão! Para darmos início à implantação, precisamos conhecer
-    <strong>sua central, os exames que ela realiza e as pessoas que farão parte do processo</strong>.
+    Parabéns pela decisão! Para darmos início à implantação, cadastre <strong>cada central, uma de cada vez</strong>:
+    os exames que ela realiza e as pessoas que farão parte do processo. Ao final, você revisa e define a ordem de prioridade.
   </p>
 </section>
 
 <!-- ── FORM ── -->
+<div class="page-layout">
+
+<aside class="saved-panel vazio" id="savedPanel">
+  <div class="saved-title">Centrais salvas</div>
+  <div id="savedList"><div class="saved-empty">Nenhuma central salva ainda. Ao salvar, ela aparece aqui.</div></div>
+</aside>
+
 <div class="form-wrapper">
 <form id="mainForm" novalidate>
 
-  <!-- ═══ 1. DADOS DA CENTRAL ═══ -->
+  <!-- ═══ 1. EMPRESA CONTRATANTE ═══ -->
   <div class="sec-card">
-    <div class="section-title">1 · Dados da Central</div>
+    <div class="section-title">1 · Empresa contratante</div>
+    <p class="sec-hint">Empresa do médico responsável pelos laudos. Preencha uma única vez; em seguida cadastre as centrais.</p>
+    <div class="grid-12">
+      <div class="field c-12">
+        <label for="ct_cnpj">CNPJ <span class="req">*</span></label>
+        <div class="cnpj-row">
+          <input type="text" id="ct_cnpj" placeholder="00.000.000/0000-00" maxlength="18" autocomplete="off" />
+          <button type="button" class="cnpj-btn" id="ctCnpjBtn" onclick="buscarCNPJContratante()">Consultar</button>
+        </div>
+      </div>
+      <span class="cnpj-status c-12" id="ctCnpjStatus"></span>
+      <div class="field c-7">
+        <label for="ct_razao">Razão Social <span class="req">*</span></label>
+        <input type="text" id="ct_razao" placeholder="Preenchido pelo CNPJ" />
+      </div>
+      <div class="field c-5">
+        <label for="ct_fantasia">Nome Fantasia <span class="opt">(opc.)</span></label>
+        <input type="text" id="ct_fantasia" placeholder="Preenchido pelo CNPJ" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EDITOR DE CENTRAL (blocos 2 a 5) ═══ -->
+  <div id="editor">
+
+  <div class="central-banner" id="centralBanner"><strong>Central 1</strong><span>Preencha os blocos 2 a 5 desta central</span></div>
+
+  <!-- ═══ 2. DADOS DA CENTRAL ═══ -->
+  <div class="sec-card">
+    <div class="section-title">2 · Dados da Central</div>
 
     <div class="grid-12">
 
@@ -567,9 +684,9 @@
     </div>
   </div>
 
-  <!-- ═══ 2. EXAMES E VOLUMETRIA ═══ -->
+  <!-- ═══ 3. EXAMES E VOLUMETRIA ═══ -->
   <div class="sec-card">
-    <div class="section-title">2 · Exames e Volumetria</div>
+    <div class="section-title">3 · Exames e Volumetria</div>
 
     <div class="field" id="field-exames">
       <label>Quais exames a central realiza? <span class="req">*</span></label>
@@ -663,9 +780,9 @@
     <div class="op-err" id="opErr">Preencha a quantidade de aparelhos e de exames/mês dos exames marcados.</div>
   </div>
 
-  <!-- ═══ 3. PESSOAS ENVOLVIDAS NA IMPLANTAÇÃO ═══ -->
+  <!-- ═══ 4. PESSOAS ENVOLVIDAS NA IMPLANTAÇÃO ═══ -->
   <div class="sec-card">
-    <div class="section-title">3 · Pessoas envolvidas na implantação</div>
+    <div class="section-title">4 · Pessoas envolvidas na implantação</div>
     <p class="sec-hint">
       Cadastre cada pessoa que participará da implantação. É obrigatório ter pelo menos um
       <strong>Responsável implantação</strong>. Se a mesma pessoa tiver mais de uma função,
@@ -678,9 +795,9 @@
     </button>
   </div>
 
-  <!-- ═══ 4. LOGOTIPO ═══ -->
+  <!-- ═══ 5. LOGOTIPO DA CENTRAL ═══ -->
   <div class="sec-card">
-    <div class="section-title">4 · Logotipo</div>
+    <div class="section-title">5 · Logotipo desta central</div>
     <div class="upload-grid single">
       <div class="upload-item">
         <div class="upload-label">Logotipo da Central <span class="opt">(opcional · PNG, JPG — máx. 5 MB)</span></div>
@@ -697,13 +814,33 @@
 
   <div class="form-error" id="formError"></div>
 
-  <!-- ═══ SUBMIT ═══ -->
-  <div class="submit-area">
-    <button type="submit" class="btn-submit">Enviar Cadastro</button>
+  <div class="editor-actions">
+    <button type="button" class="btn-secondary" id="btnAdicionar" onclick="salvarEAdicionar()">+ Salvar e adicionar outra central</button>
+    <button type="button" class="btn-submit" id="btnRevisar" onclick="revisar()">Revisar e enviar</button>
+  </div>
+
+  </div><!-- /editor -->
+
+  <!-- ═══ 6. PRÉVIA ═══ -->
+  <div id="previa" style="display:none">
+    <div class="sec-card">
+      <div class="section-title">6 · Prévia — ordem de implantação</div>
+      <p class="sec-hint">Confira as centrais e ajuste a ordem com as setas. A <strong>Prioridade 1</strong> é a primeira a ser implantada.</p>
+      <div id="previaList"></div>
+      <button type="button" class="add-rep-btn" onclick="novaCentral()">
+        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Adicionar outra central
+      </button>
+    </div>
+    <div class="form-error" id="previaError"></div>
+    <div class="submit-area">
+      <button type="submit" class="btn-submit">Confirmar e enviar</button>
+    </div>
   </div>
 
 </form>
 </div>
+</div><!-- /page-layout -->
 
 <!-- ── FOOTER ── -->
 <footer>
@@ -906,21 +1043,24 @@
 
   /* ── EXAMES: marcar o exame libera a linha da tabela ── */
   const EXAMES = ['ecg','holter','mapa','ergo'];
-  document.querySelectorAll('#exames-group input').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-      const row = document.getElementById('row-' + cb.dataset.row);
-      row.classList.toggle('row-off', !cb.checked);
-      row.querySelectorAll('input[type=number]').forEach(function(inp) {
-        inp.tabIndex = cb.checked ? 0 : -1;
-        if (!cb.checked) inp.classList.remove('cell-error');
-      });
-      const fe = document.getElementById('field-exames');
-      fe.classList.remove('field-error');
-      const msg = fe.querySelector('.field-err-msg');
-      if (msg) msg.remove();
-      atualizarOpErr();
-      if (cb.checked) document.getElementById('ap-' + cb.dataset.row).focus();
+  function setExame(ex, on, foco) {
+    const cb = document.getElementById('ex-' + ex);
+    cb.checked = on;
+    const row = document.getElementById('row-' + ex);
+    row.classList.toggle('row-off', !on);
+    row.querySelectorAll('input[type=number]').forEach(function(inp) {
+      inp.tabIndex = on ? 0 : -1;
+      if (!on) inp.classList.remove('cell-error');
     });
+    const fe = document.getElementById('field-exames');
+    fe.classList.remove('field-error');
+    const msg = fe.querySelector('.field-err-msg');
+    if (msg) msg.remove();
+    atualizarOpErr();
+    if (on && foco) document.getElementById('ap-' + ex).focus();
+  }
+  document.querySelectorAll('#exames-group input').forEach(function(cb) {
+    cb.addEventListener('change', function() { setExame(cb.dataset.row, cb.checked, true); });
   });
   document.querySelectorAll('.op-table input[type=number]').forEach(function(inp) {
     inp.addEventListener('input', function() { inp.classList.remove('cell-error'); atualizarOpErr(); });
@@ -1025,11 +1165,11 @@
     refreshPessoas();
   }
 
-  function toggleFuncaoOutro(idx) {
+  function toggleFuncaoOutro(idx, semFoco) {
     const isOutro = document.getElementById('pes_' + idx + '_funcao').value === 'Outro';
     const outro = document.getElementById('pes_' + idx + '_funcao_outro');
     outro.classList.toggle('show', isOutro);
-    if (isOutro) outro.focus();
+    if (isOutro && !semFoco) outro.focus();
   }
 
   /* Renumera os cards e esconde "Remover" quando só sobra 1 */
@@ -1068,12 +1208,54 @@
 
   addPessoa();
 
-  /* ── VALIDAÇÃO E ENVIO ── */
+  /* ── CONTRATANTE: consulta automática do CNPJ ── */
+  let ultimoCNPJContratante = '';
+  function autoCNPJContratante() {
+    const raw = document.getElementById('ct_cnpj').value.replace(/\D/g,'');
+    if (raw.length === 14 && raw !== ultimoCNPJContratante) buscarCNPJContratante();
+  }
+  document.getElementById('ct_cnpj').addEventListener('input', function() { this.value = maskCNPJ(this.value); autoCNPJContratante(); });
+  document.getElementById('ct_cnpj').addEventListener('blur', autoCNPJContratante);
+  document.getElementById('ct_cnpj').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); buscarCNPJContratante(); }
+  });
+  async function buscarCNPJContratante() {
+    const raw = document.getElementById('ct_cnpj').value.replace(/\D/g,'');
+    const status = document.getElementById('ctCnpjStatus');
+    const btn = document.getElementById('ctCnpjBtn');
+    ultimoCNPJContratante = raw;
+    if (raw.length !== 14) {
+      status.className = 'cnpj-status err';
+      status.textContent = 'Digite um CNPJ completo (14 dígitos).';
+      return;
+    }
+    btn.disabled = true;
+    status.className = 'cnpj-status loading';
+    status.textContent = 'Consultando…';
+    try {
+      const res = await fetch('https://brasilapi.com.br/api/cnpj/v1/' + raw);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+      if (data.razao_social || data.nome) document.getElementById('ct_razao').value = data.razao_social || data.nome;
+      if (data.nome_fantasia) document.getElementById('ct_fantasia').value = data.nome_fantasia;
+      status.className = 'cnpj-status ok';
+      status.textContent = '✓ Dados preenchidos automaticamente. Confira e ajuste se necessário.';
+    } catch {
+      status.className = 'cnpj-status err';
+      status.textContent = 'CNPJ não encontrado. Preencha os dados manualmente.';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  /* ── VALIDAÇÃO ── */
   const required = ['cnpj','razao_social','nome_fantasia','cep','logradouro','numero','bairro','cidade','estado','tipo_servico'];
+  const requiredContratante = ['ct_cnpj','ct_razao'];
   const fieldLabels = {
     'cnpj': 'CNPJ', 'razao_social': 'Razão Social', 'nome_fantasia': 'Nome Fantasia',
     'cep': 'CEP', 'logradouro': 'Logradouro', 'numero': 'Número', 'bairro': 'Bairro',
-    'cidade': 'Cidade', 'estado': 'Estado', 'tipo_servico': 'Tipo de Serviço'
+    'cidade': 'Cidade', 'estado': 'Estado', 'tipo_servico': 'Tipo de Serviço',
+    'ct_cnpj': 'CNPJ da contratante', 'ct_razao': 'Razão Social da contratante'
   };
   const pesLabels = {
     funcao: 'Responsável por', funcao_outro: 'Função', nome: 'Nome Completo',
@@ -1089,6 +1271,7 @@
     document.querySelectorAll('.cell-error').forEach(function(el) { el.classList.remove('cell-error'); });
     document.getElementById('opErr').classList.remove('show');
     document.getElementById('formError').classList.remove('show');
+    document.getElementById('previaError').classList.remove('show');
   }
   function markFieldError(id, label, texto) {
     var el = document.getElementById(id);
@@ -1105,18 +1288,13 @@
     el.addEventListener('change', limpar, { once: true });
   }
 
-  function coletarPessoas() {
-    return [...document.querySelectorAll('#pesContainer .rep-block')].map(function(b) {
-      const v = function(f) { const el = document.getElementById('pes_' + b.dataset.idx + '_' + f); return el ? el.value.trim() : ''; };
-      const funcao = v('funcao') === 'Outro' ? v('funcao_outro') : v('funcao');
-      return { funcao: funcao, nome: v('nome'), nascimento: v('nascimento'), email: v('email'), celular: v('celular') };
+  function validarContratante(erros) {
+    requiredContratante.forEach(function(id) {
+      if (!document.getElementById(id).value.trim()) { markFieldError(id); erros.push(id); }
     });
   }
 
-  function validar() {
-    clearFieldErrors();
-    const erros = [];   // ids dos elementos com erro, na ordem da página
-
+  function validarCentral(erros) {
     required.forEach(function(id) {
       if (!document.getElementById(id).value.trim()) { markFieldError(id); erros.push(id); }
     });
@@ -1148,62 +1326,283 @@
     const temImplantacao = coletarPessoas().some(function(x) { return x.funcao === FUNCAO_IMPLANTACAO; });
     if (!temImplantacao) {
       const box = document.getElementById('formError');
-      box.textContent = 'Inclua pelo menos uma pessoa com a função "' + FUNCAO_IMPLANTACAO + '" (bloco 3).';
+      box.textContent = 'Inclua pelo menos uma pessoa com a função "' + FUNCAO_IMPLANTACAO + '" nesta central (bloco 4).';
       box.classList.add('show');
-      if (!erros.length) erros.push('formError');
+      erros.push('formError');
     }
-    return erros;
   }
 
+  function irParaErro(erros) {
+    const el = document.getElementById(erros[0]);
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (el.focus) el.focus({ preventScroll: true });
+  }
+
+  /* ── LER / PREENCHER / LIMPAR A CENTRAL DO FORMULÁRIO ── */
+  function coletarPessoas() {
+    return [...document.querySelectorAll('#pesContainer .rep-block')].map(function(b) {
+      const v = function(f) { const el = document.getElementById('pes_' + b.dataset.idx + '_' + f); return el ? el.value.trim() : ''; };
+      const sel = v('funcao');
+      return {
+        funcao: sel === 'Outro' ? v('funcao_outro') : sel,
+        funcao_sel: sel, funcao_outro: v('funcao_outro'),
+        nome: v('nome'), nascimento: v('nascimento'), email: v('email'), celular: v('celular')
+      };
+    });
+  }
+
+  function lerCentral() {
+    const g = id => document.getElementById(id).value.trim() || null;
+    const logo = document.getElementById('file_logo');
+    const preview = document.getElementById('preview_logo');
+    const volumetria = {};
+    const exames = EXAMES.filter(ex => document.getElementById('ex-' + ex).checked);
+    exames.forEach(function(ex) { volumetria[ex] = { ap: g('ap-' + ex), vol: g('vol-' + ex), eq: g('eq-' + ex) }; });
+    return {
+      central:  { cnpj: g('cnpj'), razao_social: g('razao_social'), nome_fantasia: g('nome_fantasia'), tipo_servico: g('tipo_servico') },
+      endereco: { cep: g('cep'), logradouro: g('logradouro'), numero: g('numero'), complemento: g('complemento'), bairro: g('bairro'), cidade: g('cidade'), estado: g('estado') },
+      exames: exames,
+      volumetria: volumetria,
+      pessoas: coletarPessoas(),
+      logo: logo._b64 ? { b64: logo._b64, nome: logo._nome, tipo: logo._tipo, src: preview.src } : null
+    };
+  }
+
+  function limparCentral() {
+    clearFieldErrors();
+    required.concat(['complemento']).forEach(function(id) { document.getElementById(id).value = ''; });
+    document.getElementById('tipo_servico').selectedIndex = 0;
+    ['cnpjStatus','cepStatus'].forEach(function(id) { const s = document.getElementById(id); s.className = id === 'cnpjStatus' ? 'cnpj-status' : 'cep-status'; s.textContent = ''; });
+    ultimoCNPJ = ''; ultimoCEP = '';
+    EXAMES.forEach(function(ex) {
+      setExame(ex, false, false);
+      ['ap-','vol-','eq-'].forEach(function(pre) { document.getElementById(pre + ex).value = ''; });
+      const d = document.getElementById('eq-' + ex + '-display');
+      d.textContent = 'Selecione os fabricantes'; d.classList.add('fab-placeholder');
+    });
+    document.getElementById('pesContainer').innerHTML = '';
+    pesCount = 0;
+    addPessoa();
+    removeUpload('file_logo','zone_logo','preview_logo','label_logo');
+  }
+
+  function preencherCentral(c) {
+    limparCentral();
+    const set = function(id, v) { document.getElementById(id).value = v || ''; };
+    ['cnpj','razao_social','nome_fantasia','tipo_servico'].forEach(function(k) { set(k, c.central[k]); });
+    ['cep','logradouro','numero','complemento','bairro','cidade','estado'].forEach(function(k) { set(k, c.endereco[k]); });
+    ultimoCNPJ = (c.central.cnpj || '').replace(/\D/g,'');
+    ultimoCEP  = (c.endereco.cep || '').replace(/\D/g,'');
+    c.exames.forEach(function(ex) {
+      setExame(ex, true, false);
+      const v = c.volumetria[ex] || {};
+      set('ap-' + ex, v.ap); set('vol-' + ex, v.vol); set('eq-' + ex, v.eq);
+      if (v.eq) { const d = document.getElementById('eq-' + ex + '-display'); d.textContent = v.eq; d.classList.remove('fab-placeholder'); }
+    });
+    document.getElementById('pesContainer').innerHTML = '';
+    pesCount = 0;
+    c.pessoas.forEach(function(p) {
+      addPessoa();
+      const pre = 'pes_' + (pesCount - 1) + '_';
+      set(pre + 'funcao', p.funcao_sel); set(pre + 'funcao_outro', p.funcao_outro);
+      set(pre + 'nome', p.nome); set(pre + 'nascimento', p.nascimento); set(pre + 'email', p.email); set(pre + 'celular', p.celular);
+      toggleFuncaoOutro(pesCount - 1, true);
+    });
+    refreshIdem();
+    if (c.logo) {
+      const input = document.getElementById('file_logo');
+      input._b64 = c.logo.b64; input._nome = c.logo.nome; input._tipo = c.logo.tipo;
+      const img = document.getElementById('preview_logo');
+      img.src = c.logo.src; img.style.display = 'block';
+      document.getElementById('label_logo').style.display = 'none';
+      document.getElementById('zone_logo').classList.add('has-file');
+      document.getElementById('remove_logo').style.display = 'flex';
+    }
+  }
+
+  /* Há algo preenchido na central que está na tela? */
+  function centralTemDados() {
+    const c = lerCentral();
+    return !!(c.central.cnpj || c.central.razao_social || c.central.nome_fantasia || c.endereco.cep || c.exames.length || c.logo ||
+      c.pessoas.some(function(p) { return p.nome || p.funcao_sel || p.email; }));
+  }
+
+  /* ── CENTRAIS SALVAS (a ordem do array = prioridade) ── */
+  let centrais = [];
+  let editando = null;   // índice da central aberta no editor; null = central nova
+
+  function esc(s) { return String(s || '').replace(/[&<>"']/g, function(ch) { return '&#' + ch.charCodeAt(0) + ';'; }); }
+  function thumb(c) {
+    if (c.logo && c.logo.src) return '<img class="logo-thumb" src="' + c.logo.src + '" alt="" />';
+    const ini = (c.central.nome_fantasia || c.central.razao_social || '?').trim().charAt(0).toUpperCase();
+    return '<span class="logo-thumb vazio">' + esc(ini) + '</span>';
+  }
+  function nomeCentral(c) { return c.central.nome_fantasia || c.central.razao_social || 'Central'; }
+  function cidadeCentral(c) { return [c.endereco.cidade, (c.endereco.estado || '').toUpperCase()].filter(Boolean).join('/'); }
+
+  function renderSalvas() {
+    const list = document.getElementById('savedList');
+    document.getElementById('savedPanel').classList.toggle('vazio', !centrais.length);
+    if (!centrais.length) {
+      list.innerHTML = '<div class="saved-empty">Nenhuma central salva ainda. Ao salvar, ela aparece aqui.</div>';
+      return;
+    }
+    list.innerHTML = centrais.map(function(c, i) {
+      return '<button type="button" class="saved-item' + (editando === i ? ' ativo' : '') + '" onclick="editarCentral(' + i + ')" title="Editar">' +
+        '<span class="saved-num">' + (i + 1) + '</span>' + thumb(c) +
+        '<span class="saved-info"><div class="saved-nome">' + esc(nomeCentral(c)) + '</div><div class="saved-cidade">' + esc(cidadeCentral(c)) + '</div></span>' +
+      '</button>';
+    }).join('');
+  }
+
+  function atualizarBanner() {
+    const b = document.getElementById('centralBanner');
+    if (editando === null) {
+      b.innerHTML = '<strong>Central ' + (centrais.length + 1) + '</strong><span>Preencha os blocos 2 a 5 desta central</span>';
+    } else {
+      b.innerHTML = '<strong>Editando: Central ' + (editando + 1) + ' — ' + esc(nomeCentral(centrais[editando])) + '</strong><span>Altere o que precisar e salve</span>';
+    }
+    document.getElementById('btnAdicionar').textContent = editando === null ? '+ Salvar e adicionar outra central' : 'Salvar e adicionar outra central';
+    document.getElementById('btnRevisar').textContent = editando === null ? 'Revisar e enviar' : 'Salvar e ir para a prévia';
+  }
+
+  function salvarCentral() {
+    clearFieldErrors();
+    const erros = [];
+    validarContratante(erros);
+    validarCentral(erros);
+    if (erros.length) { irParaErro(erros); return false; }
+    const c = lerCentral();
+    if (editando === null) centrais.push(c); else centrais[editando] = c;
+    editando = null;
+    renderSalvas();
+    return true;
+  }
+
+  function mostrarEditor() {
+    document.getElementById('previa').style.display = 'none';
+    document.getElementById('editor').style.display = '';
+    atualizarBanner();
+    renderSalvas();
+    document.getElementById('centralBanner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function salvarEAdicionar() {
+    if (!salvarCentral()) return;
+    limparCentral();
+    mostrarEditor();
+  }
+
+  function revisar() {
+    // Tela em branco com centrais já salvas: só vai para a prévia
+    if (editando === null && centrais.length && !centralTemDados()) {
+      clearFieldErrors();
+      const erros = [];
+      validarContratante(erros);
+      if (erros.length) { irParaErro(erros); return; }
+    } else if (!salvarCentral()) {
+      return;
+    }
+    limparCentral();
+    mostrarPrevia();
+  }
+
+  function mostrarPrevia() {
+    editando = null;
+    document.getElementById('editor').style.display = 'none';
+    document.getElementById('previa').style.display = '';
+    renderSalvas();
+    renderPrevia();
+    document.getElementById('previa').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderPrevia() {
+    const n = centrais.length;
+    document.getElementById('previaList').innerHTML = centrais.map(function(c, i) {
+      return '<div class="previa-item">' +
+        '<span class="prio-badge">Prioridade ' + (i + 1) + '</span>' + thumb(c) +
+        '<div class="previa-info"><div class="saved-nome">' + esc(nomeCentral(c)) + '</div><div class="saved-cidade">' + esc(cidadeCentral(c)) + '</div></div>' +
+        '<div class="previa-acoes">' +
+          '<button type="button" class="mini-btn" title="Subir prioridade" onclick="moverCentral(' + i + ',-1)"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button type="button" class="mini-btn" title="Descer prioridade" onclick="moverCentral(' + i + ',1)"' + (i === n - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button type="button" class="mini-btn" onclick="editarCentral(' + i + ')">Editar</button>' +
+          '<button type="button" class="mini-btn del" onclick="removerCentral(' + i + ')">Remover</button>' +
+        '</div>' +
+      '</div>';
+    }).join('') || '<div class="saved-empty">Nenhuma central cadastrada. Clique em "Adicionar outra central".</div>';
+  }
+
+  function moverCentral(i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= centrais.length) return;
+    const tmp = centrais[i]; centrais[i] = centrais[j]; centrais[j] = tmp;
+    renderPrevia(); renderSalvas();
+  }
+
+  function removerCentral(i) {
+    if (!confirm('Remover a central "' + nomeCentral(centrais[i]) + '"?')) return;
+    centrais.splice(i, 1);
+    renderPrevia(); renderSalvas();
+  }
+
+  function editarCentral(i) {
+    const noEditor = document.getElementById('editor').style.display !== 'none';
+    if (noEditor && editando === i) return;
+    if (noEditor && centralTemDados() &&
+        !confirm('A central que está na tela não foi salva. Descartar o que foi preenchido e abrir "' + nomeCentral(centrais[i]) + '"?')) return;
+    editando = i;
+    preencherCentral(centrais[i]);
+    mostrarEditor();
+  }
+
+  function novaCentral() {
+    editando = null;
+    limparCentral();
+    mostrarEditor();
+  }
+
+  /* ── ENVIO (só a partir da prévia) ── */
   document.getElementById('mainForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const erros = validar();
-    if (erros.length) {
-      const el = document.getElementById(erros[0]);
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      if (el.focus) el.focus({ preventScroll: true });
+    if (document.getElementById('previa').style.display === 'none') return;   // Enter dentro do editor não envia
+    clearFieldErrors();
+    const erros = [];
+    validarContratante(erros);
+    if (erros.length) { irParaErro(erros); return; }
+    if (!centrais.length) {
+      const box = document.getElementById('previaError');
+      box.textContent = 'Cadastre pelo menos uma central antes de enviar.';
+      box.classList.add('show');
       return;
     }
 
     const g = id => document.getElementById(id).value.trim() || null;
-    const exames = EXAMES.filter(ex => document.getElementById('ex-' + ex).checked);
-    const logo = document.getElementById('file_logo');
     const payload = {
-      central: {
-        cnpj:          g('cnpj'),
-        razao_social:  g('razao_social'),
-        nome_fantasia: g('nome_fantasia'),
-        tipo_servico:  g('tipo_servico'),
-      },
-      endereco: {
-        cep:         g('cep'),
-        logradouro:  g('logradouro'),
-        numero:      g('numero'),
-        complemento: g('complemento'),
-        bairro:      g('bairro'),
-        cidade:      g('cidade'),
-        estado:      g('estado'),
-      },
-      exames: exames.map(ex => document.getElementById('ex-' + ex).value),
-      pessoas: coletarPessoas(),
-      documentos: {
-        logotipo:      logo._b64  || null,
-        logotipo_nome: logo._nome || null,
-        logotipo_tipo: logo._tipo || null,
-      },
+      contratante: { cnpj: g('ct_cnpj'), razao_social: g('ct_razao'), nome_fantasia: g('ct_fantasia') },
+      centrais: centrais.map(function(c, i) {
+        const item = {
+          prioridade: i + 1,
+          central:  c.central,
+          endereco: c.endereco,
+          exames:   c.exames.map(ex => document.getElementById('ex-' + ex).value),
+          pessoas:  c.pessoas.map(p => ({ funcao: p.funcao, nome: p.nome, nascimento: p.nascimento, email: p.email, celular: p.celular })),
+          logotipo: c.logo ? { b64: c.logo.b64, nome: c.logo.nome, tipo: c.logo.tipo } : null
+        };
+        // Volumetria: mesmas chaves do entendimento (ap_ecg, vol_ecg, eq_ecg…), só dos exames marcados
+        c.exames.forEach(function(ex) {
+          item['ap_' + ex]  = c.volumetria[ex].ap;
+          item['vol_' + ex] = c.volumetria[ex].vol;
+          item['eq_' + ex]  = c.volumetria[ex].eq;
+        });
+        return item;
+      }),
       timestamp: new Date().toISOString(),
       origem: 'aliar-cadastro-centrais'
     };
-    // Volumetria: mesmas chaves do entendimento (ap_ecg, vol_ecg, eq_ecg…), só dos exames marcados
-    exames.forEach(function(ex) {
-      payload['ap_' + ex]  = g('ap-' + ex);
-      payload['vol_' + ex] = g('vol-' + ex);
-      payload['eq_' + ex]  = g('eq-' + ex);
-    });
 
-    const btn = this.querySelector('.btn-submit');
+    const btn = this.querySelector('#previa .btn-submit');
     btn.disabled = true;
-    btn.textContent = 'Enviando…';
+    btn.textContent = 'Enviando… pode levar alguns segundos';
 
     try {
       await fetch(SCRIPT_URL, {
@@ -1219,6 +1618,12 @@
     if (ecgnowImg) sessionStorage.setItem('ecgnow_logo_src', ecgnowImg.src);
     if (aliarImg)  sessionStorage.setItem('aliar_logo_src',  aliarImg.src);
     window.location.href = 'obrigado.html';
+  });
+
+  /* Aviso ao fechar a página com centrais não enviadas */
+  window.addEventListener('beforeunload', function(e) {
+    if (document.getElementById('previa').querySelector('.btn-submit').disabled) return;
+    if (centrais.length || centralTemDados()) { e.preventDefault(); e.returnValue = ''; }
   });
 
   /* ── LOGO RODAPÉ ── */
