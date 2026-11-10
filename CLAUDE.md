@@ -143,7 +143,7 @@ Layout: lista lateral `#savedPanel` (centrais salvas, com miniatura da logo + no
 2. Colar o arquivo **INTEIRO** no editor do Apps Script (Ctrl+A, apagar, colar). **Nunca colar só uma função** — já substituiu o arquivo todo e derrubou os formulários.
 3. Conferir o fim do arquivo: nenhum caractere solto após a última `}` (um "S" solto causou `ReferenceError` e falha em todas as execuções).
 4. Se o código passou a usar um serviço novo (`UrlFetchApp`, etc.): selecionar `autorizarPermissoes` no menu ao lado de ▶ Executar, rodar uma vez e aceitar a autorização. Só salvar/implantar NÃO pede essa permissão.
-5. Implantar → Gerenciar implantações → editar → **Nova versão** → Implantar. Só salvar não atualiza a URL publicada.
+5. Implantar → **Gerenciar implantações** (NUNCA "Nova implantação") → na coluna "Ativo", selecionar a implantação cujo App da Web contém `AKfycbz2NhwPbzUf…Mlx` → lápis → Versão: **Nova versão** → Implantar. Só salvar não atualiza a URL publicada. Em 10/11/2026 a Versão 19 foi parar numa implantação extra (`AKfycbxJft6…Okc7-E`) e as LPs continuaram no código antigo — sempre conferir o código da implantação.
 6. Testar. O Doc vai para a pasta certa.
 
 ### Diagnóstico rápido
@@ -171,7 +171,7 @@ Layout: lista lateral `#savedPanel` (centrais salvas, com miniatura da logo + no
 
 ## Pendências
 
-- **Cadastro de Centrais (várias por envio):** LP e `Code.gs` prontos no repo (09/11/2026). Falta: colar o `Code.gs` inteiro no Apps Script (Nova versão), publicar e teste real com 2 centrais. A versão de 1 central já foi testada em produção (Doc "Central ALIAR — Osl" na raiz da pasta das Centrais, pode ser apagado).
+- **Cadastro de Centrais (várias por envio):** concluído e testado em produção (10/11/2026, Versão 19 do script): pasta "Teste Dr Ficticio — 11.222.333/0001-81" com P1/P2 + logos (dados de teste, podem ser apagados junto com os Docs "Central ALIAR — …" soltos na pasta das Centrais).
 - Remote `origin` já reconfigurado sem token (09/11/2026, login via Git Credential Manager). Falta só revogar o token antigo em https://github.com/settings/tokens.
 - Submissões feitas durante a janela em que o script esteve quebrado não são recuperáveis (nada foi gravado); pedir reenvio se houver lead real.
 - CRM RD Station: integração dos docs gerados com pipeline de negociação.
