@@ -197,16 +197,66 @@ function criarDocCadastro(d) {
 }
 
 // ── Centrais: um envio traz a contratante (empresa do médico) + N centrais em ordem de prioridade.
-// Gera 1 Doc por central dentro da pasta do cliente (contratante). Sem e-mail de alerta.
+// Gera 1 Doc por central dentro da pasta do cliente (contratante) e, com 2+ centrais,
+// um Doc-resumo para o time de implantação. Sem e-mail de alerta.
 function criarDocsCentrais(d) {
   // Formato antigo (1 central por envio, sem contratante) continua aceito
   if (!d.centrais) d = { contratante: {}, centrais: [Object.assign({ prioridade: 1 }, d)] };
   const ct    = d.contratante || {};
   const pasta = obterPastaCliente(ct);
   const total = d.centrais.length;
-  d.centrais.forEach(function(c, i) {
-    criarDocCentral(c, ct, c.prioridade || (i + 1), total, pasta);
+  const links = d.centrais.map(function(c, i) {
+    return criarDocCentral(c, ct, c.prioridade || (i + 1), total, pasta);
   });
+  if (total >= 2) criarResumoImplantacao(ct, d.centrais, links, pasta);
+}
+
+// ── Resumo para o time de implantação: 1 linha por central, na ordem de prioridade ──
+function criarResumoImplantacao(ct, centrais, links, pasta) {
+  const cliente = tc(ct.nome_fantasia || ct.razao_social || 'Cliente');
+  const doc  = DocumentApp.create('00 — Resumo de Implantação — ' + cliente + ' — ' + new Date().toLocaleDateString('pt-BR'));
+  const body = doc.getBody();
+  body.setPageWidth(842).setPageHeight(595);   // A4 deitado: cabe a tabela
+  body.setMarginLeft(36).setMarginRight(36).setMarginTop(36).setMarginBottom(36);
+
+  body.appendParagraph('RESUMO DE IMPLANTAÇÃO — CENTRAIS ALIAR').setHeading(DocumentApp.ParagraphHeading.HEADING1);
+  linha(body, 'Contratante',       [tc(ct.razao_social), tc(ct.nome_fantasia)].filter(Boolean).join(' | '));
+  linha(body, 'CNPJ',              ct.cnpj);
+  linha(body, 'Data do envio',     new Date().toLocaleString('pt-BR'));
+  linha(body, 'Total de centrais', String(centrais.length));
+  body.appendParagraph('');
+
+  const nomesEx = {ecg:'ECG', holter:'Holter', mapa:'MAPA', ergo:'T. Ergo'};
+  const linhas = [['Prioridade', 'Central', 'Cidade/UF', 'Exames (volume/mês)', 'Responsável implantação', 'Doc completo']];
+  centrais.forEach(function(c, i) {
+    const cen = c.central || {};
+    const end = c.endereco || {};
+    const exames = ['ecg','holter','mapa','ergo']
+      .filter(function(ex) { return c['ap_'+ex] || c['vol_'+ex]; })
+      .map(function(ex) { return nomesEx[ex] + ': ' + (c['vol_'+ex] || '—'); }).join('\n');
+    const resp = (c.pessoas || [])
+      .filter(function(p) { return p.funcao === 'Responsável implantação'; })
+      .map(function(p) { return tc(p.nome) + '\n' + (p.celular || '') + '\n' + (p.email || ''); }).join('\n\n');
+    linhas.push([
+      'P' + (c.prioridade || (i + 1)),
+      tc(cen.nome_fantasia || cen.razao_social) + (cen.cnpj ? '\n' + cen.cnpj : ''),
+      [tc(end.cidade), (end.estado || '').toUpperCase()].filter(Boolean).join('/'),
+      exames || '—',
+      resp || '—',
+      links[i] ? 'Abrir Doc' : '—'
+    ]);
+  });
+
+  const tabela = body.appendTable(linhas);
+  tabela.getRow(0).editAsText().setBold(true);
+  for (let r = 1; r < tabela.getNumRows(); r++) {
+    if (links[r - 1]) tabela.getCell(r, 5).editAsText().setLinkUrl(links[r - 1]);
+  }
+  body.appendParagraph('');
+  body.appendParagraph('Endereço completo, demais pessoas e logotipo de cada central estão no Doc completo (P1, P2…) desta mesma pasta.').setItalic(true);
+
+  doc.saveAndClose();
+  DriveApp.getFileById(doc.getId()).moveTo(pasta);
 }
 
 function criarDocCentral(d, ct, prioridade, total, pasta) {
@@ -274,7 +324,9 @@ function criarDocCentral(d, ct, prioridade, total, pasta) {
   }
 
   doc.saveAndClose();
-  DriveApp.getFileById(doc.getId()).moveTo(pasta);
+  const arquivo = DriveApp.getFileById(doc.getId());
+  arquivo.moveTo(pasta);
+  return arquivo.getUrl();
 }
 
 // ── Pasta das Centrais: procura "Respostas - Centrais ALIAR" ao lado da PASTA_CADASTRO; cria se não existir ──
