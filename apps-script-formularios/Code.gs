@@ -5,12 +5,19 @@ const PASTA_CADASTRO   = '144OpeDuNke782I-NAdSIeCbE23h38j_q';
 // Nenhum formulário envia e-mail de alerta (removido em 09/11/2026 — nunca chegava e não é necessário).
 const PASTA_CENTRAIS_NOME = 'Respostas - Centrais ALIAR';
 
-// ── Title Case: primeira letra de cada palavra em maiúscula ──
+// ── Title Case: primeira letra de cada palavra em maiúscula (siglas da lista ficam em maiúsculo) ──
+const SIGLAS = ['UPA','UBS','UTI','AME','SUS','ECG','MAPA','TI','ME','EPP','EIRELI','SA','S/A','CNPJ','CRM'];
 function tc(str) {
   if (!str) return '';
   return String(str).toLowerCase().split(' ').map(function(w) {
+    if (SIGLAS.indexOf(w.toUpperCase()) >= 0) return w.toUpperCase();
     return w ? w[0].toUpperCase() + w.slice(1) : w;
   }).join(' ');
+}
+
+// ── Texto seguro para nome de arquivo: sem acentos, espaços viram "_" ──
+function nomeArquivo(str) {
+  return String(str).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w\-]+/g, '_');
 }
 
 function doGet(e) {
@@ -249,6 +256,8 @@ function criarResumoImplantacao(ct, centrais, links, pasta) {
 
   const tabela = body.appendTable(linhas);
   tabela.getRow(0).editAsText().setBold(true);
+  // Larguras (pt, somam a área útil de 770): Prioridade, Central, Cidade/UF, Exames, Responsável, Doc
+  [55, 215, 95, 95, 255, 55].forEach(function(w, i) { tabela.setColumnWidth(i, w); });
   for (let r = 1; r < tabela.getNumRows(); r++) {
     if (links[r - 1]) tabela.getCell(r, 5).editAsText().setLinkUrl(links[r - 1]);
   }
@@ -312,7 +321,7 @@ function criarDocCentral(d, ct, prioridade, total, pasta) {
       logo.b64,
       logo.nome || 'logotipo',
       logo.tipo || 'image/png',
-      'P' + prioridade + '_' + central.replace(/[^\w\-]+/g, '_') + '_logotipo',
+      'P' + prioridade + '_' + nomeArquivo(central) + '_logotipo',
       pasta.getId()
     );
   }
